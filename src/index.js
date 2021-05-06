@@ -1,17 +1,43 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import { render } from 'react-dom'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// ---------------
+// CSS:
+// ---------------
+import 'bootstrap/dist/css/bootstrap.min.css'
+// import './assets/styles/custom.scss'
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// ---------------
+// Material UI:
+// ---------------
+import CssBaseline from '@material-ui/core/CssBaseline'
+import { ThemeProvider } from '@material-ui/core/styles'
+import theme from './assets/styles/theme'
+
+// ---------------
+// Config:
+// --------------- 
+import config from './config'
+import C from './config/constants'
+import { PAGES, SITE } from './config/routes'
+
+// --------------- 
+// Components
+// --------------- 
+import App from './components/app'
+
+// --------------- 
+// Context/Hooks
+// --------------- 
+import { SearchProvider } from './contexts/searchContext'
+
+render(
+    <SearchProvider>
+    <ThemeProvider theme={theme}>
+        <CssBaseline />      
+        
+        <App env={config[C.ENV]} pages={PAGES} site={SITE} />
+    </ThemeProvider>
+    </SearchProvider>,
+    document.querySelector('#root')
+)
