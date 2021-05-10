@@ -3,11 +3,8 @@ import clsx from 'clsx'
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import Box from '@material-ui/core/Box'
+import { Box, ListItem, ListItemIcon, ListItemText, List} from '@material-ui/core/'
+
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import IconButton from '@material-ui/core/IconButton'
@@ -58,36 +55,36 @@ export function MenuWebDrawer({drawer, toggleDrawer, pages}){
     
     return(
         <SwipeableDrawer
-            anchor="left"
-            open={drawer['web']}
-            onOpen={toggleDrawer('web', true)} 
-            onClose={toggleDrawer('web', false)} 
-            className={clsx(classes.drawer)}
+          anchor="left"
+          open={drawer}
+          onOpen={toggleDrawer(true)} 
+          onClose={toggleDrawer(false)} 
+          className={clsx(classes.drawer)}
         >
-            <Box className={clsx(classes.toolbar, classes.drawer)} >
-                <Box textAlign="right">
-                    <IconButton onClick={toggleDrawer('web', false)}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                    </IconButton>
-                </Box>
-                <Box width="100%">
-                    <List>
-                    { pages.map((item, i) => 
-                        <ListItem key={i} button component="a" href={item.path} disabled={item.disabled} className={classes.listItem}>
-                            {(item.icon) ?
-                                <ListItemIcon>
-                                <item.icon/>
-                                </ListItemIcon>
-                                : null }
-                            <ListItemText primary={
-                                <Typography variant="h6" component="h6">
-                                    {(item.name).toUpperCase()}
-                                </Typography>
-                            } className={classes.listItem}  />
-                        </ListItem>
-                    )}
-                    </List>
-                </Box>
+          <Box className={clsx(classes.toolbar, classes.drawer)} >
+              <Box textAlign="right">
+                  <IconButton onClick={toggleDrawer(false)}>
+                      {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                  </IconButton>
+              </Box>
+              <Box width="100%">
+                <List>
+                  { pages.map((item, i) => 
+                    <ListItem key={i} button component="a" href={item.path} disabled={item.disabled} className={classes.listItem}>
+                        {(item.icon) ?
+                            <ListItemIcon>
+                            <item.icon/>
+                            </ListItemIcon>
+                            : null }
+                        <ListItemText primary={
+                            <Typography variant="h6" component="h6">
+                                {(item.name).toUpperCase()}
+                            </Typography>
+                        } className={classes.listItem}  />
+                    </ListItem>
+                  )}
+                </List>
+              </Box>
             </Box>
         </SwipeableDrawer>
     )

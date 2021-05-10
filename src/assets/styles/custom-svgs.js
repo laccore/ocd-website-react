@@ -18,3 +18,30 @@ export const MainLogo = (props) => {
         </SvgIcon>
     )
 }
+
+export const OutsourceIcon = (props) => {
+    const classes = mainLogoStyles()
+    return (
+        <SvgIcon {...props} viewBox="0 0 100 100" className={classes.root}>
+            
+        </SvgIcon>
+    )
+}
+
+export const AggregateIconIcon = (props) => {
+    const classes = mainLogoStyles()
+    return (
+        <SvgIcon {...props} viewBox="0 0 100 100" className={classes.root}>
+            
+        </SvgIcon>
+    )
+}
+
+export const CDFIconIcon = (props) => {
+    const classes = mainLogoStyles()
+    return (
+        <SvgIcon {...props} viewBox="0 0 100 100" className={classes.root}>
+            
+        </SvgIcon>
+    )
+}

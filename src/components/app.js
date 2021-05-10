@@ -2,16 +2,15 @@ import React, { useState } from 'react'
 import clsx from 'clsx'
 
 import { useStyles } from './app.styles'
-import {Box, Typography } from '@material-ui/core/'
+import {Box, Container, Breadcrumbs, Link, Typography } from '@material-ui/core/'
 
 // ----------
 // Parts:
 // ----------
-import { Toolbar } from '../parts/toolbar'
-import { MemoMenuWebDrawer } from '../parts/menuWebDrawer'
+
 
 // ----------
-// Components:
+// Layout:
 // ----------
 import Footer from '../layout/footer'
 import Header from '../layout/header'
@@ -26,75 +25,48 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 // const customHistory = createBrowserHistory()
 
 // ----------
-// Contexts:
+// Pages: 
 // ----------
 import { Lost } from '../pages/lost'
+
+// ----------
+// Contexts:
+// ----------
 import { ErrorsProvider } from '../contexts/errorsContext'
 import { LoadingProvider } from '../contexts/loadingContext'
 
 // ----------
 // Functions:
 // ----------
-// ... 
 
-export const App = ({env, pages, site}) => {
+
+export const App = (props) => {
 
   const classes = useStyles()
-
-  const [drawer, setDrawer] = useState({
-    web: false
-  })
-
-  const toggleDrawer = (type, value) => (event) => {
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return
-    }
-    setDrawer({
-      ...drawer,
-      [type]: value
-    })
-  }
+  const {env, pages, assets} = props
 
   return ( 
     <Router> 
       <ErrorsProvider>
       <LoadingProvider>
-      <Box className={classes.root} flexDirection='column'>
-        
-        {/* ---- App Primary Toolbar ---- */}
-        <Toolbar env={env} site={site} drawer={drawer} toggleDrawer={toggleDrawer} pages={pages} />
-        
-        {/* ---- App Drawers ---- */}
-        <MemoMenuWebDrawer drawer={drawer} toggleDrawer={toggleDrawer} pages={pages} />
-        
-        <Box width='100%' className={clsx(classes.bodyBox)}> 
+        <Box className={classes.root} flexDirection='column'>
           
-          <Box py={4} textAlign={'center'} width={'100%'} className={clsx(`bg-dark`, classes.appHeader)} >
-            <Typography
-              variant={'h3'}
-              component={'h1'}
-              fontWeight={'bold'}
-              className={clsx(classes.appHeaderTypo)}
-              >
-              {env.appName}
-            </Typography>
-          </Box>
-
-          <Box p={2} textAlign='center' bgcolor='black.full' color='white.main'>
-            {/* ...header */}
-          </Box>
+          <Header env={env} assets={assets} pages={pages} {...props}/>
 
           {/* ---- Pages ---- */}
-          <Box p={0} my={2} className={clsx(`container-xl`, classes.pageBox)}>
+          <Container maxWidth={'md'} className={clsx(classes.pageBox)}> 
             <Switch>
               
               { pages.map( page => 
                 <Route 
                   key={page.name} 
                   env={env} 
+                  exact={page.exact}
                   path={`${page.path}`}  
                   render={(props) => 
-                    <page.component {...props} {...classes} page={page} env={env} drawer={drawer} toggleDrawer={toggleDrawer} />
+                    <>
+                      <page.component {...props} {...classes} page={page} env={env}  />
+                    </>
                   }
                 />
               )}
@@ -102,16 +74,11 @@ export const App = ({env, pages, site}) => {
               {/* <Redirect from='/' to='/home' /> */}
               <Route component={Lost} /> 
             </Switch>
-          </Box>
-          
-          <Box p={2} textAlign='center' bgcolor='black.full' color='white.main'>
-            {/* ...footer */}
-          </Box>
-        </Box>
-
-      </Box>
+          </Container>
         
+          <Footer env={env} assets={assets} pages={pages} />
 
+        </Box>
       </LoadingProvider>
       </ErrorsProvider>
     </Router> 

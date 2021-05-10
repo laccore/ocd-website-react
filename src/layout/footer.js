@@ -2,23 +2,24 @@ import React from 'react'
 import clsx from 'clsx'
 
 // import * as footerStyles from './footer.module.scss'
-import { Box, Typography } from '@material-ui/core'
+import { Box, Container, Typography } from '@material-ui/core'
 
 // import Copyright from '../components/copyright'
 
-const Footer = ({ siteMetadata }) => {
+const Footer = ({ env, pages, assets }) => {
 
     return (
-        <footer>
-            <Box py={3} px={1} color={'inherit'} textAlign={'center'}> 
-                <Typography variant="subtitle1" component="h6" align="center">
-                    {siteMetadata.funding}
+        <>
+            <Box py={3} px={1} bgcolor={'primary.main'} color={'grey.100'} textAlign={'center'}> 
+                
+            </Box>
+
+            <Box py={2}  bgcolor={'black.main'} color={'grey.300'} textAlign={'center'}> 
+                <Typography variant="subtitle2" component="h6" align="center">
+                    {`Copyright © ${env.siteName} ${new Date().getFullYear()}.`}
                 </Typography>
             </Box>
-            <Box bgcolor={'black.main'} py={1} color={'inherit'} textAlign={'center'}> 
-                {/* <Copyright siteMetadata={siteMetadata}/> */}
-            </Box>
-        </footer>
+        </>
     )
 }
 
