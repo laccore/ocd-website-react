@@ -6,13 +6,6 @@ import React from 'react'
 import { MainLogo } from '../assets/styles/custom-svgs'
 
 // ---------------
-// Filter - GIFs:
-// ---------------
-import OutsourceIconPNG from '../assets/icons/ocd-icon-outsource.png'
-import AggregateIconPNG from '../assets/icons/ocd-icon-aggregate.png'
-import CDFIconPNG from '../assets/icons/ocd-icon-cdf.png'
-
-// ---------------
 // Logos:
 // ---------------
 // import Logo from '../assets/logo/ocd-logo.png'
@@ -25,6 +18,9 @@ import CDFIconPNG from '../assets/icons/ocd-icon-cdf.png'
 // ---------------
 import { Home } from '../pages/home' 
 import { About } from '../pages/about'
+import { ResearchProject } from '../pages/researchProject'
+import { DigitalObject } from '../pages/digitalObject'
+import { Package } from '../pages/package'
 
 // ----------------
 // Configuration:
@@ -32,17 +28,21 @@ import { About } from '../pages/about'
 import endpoints from './endpoints'
 import C from './constants'
 import config from './'
-import { isEmpty } from '../functions/functions'
+import { isEmpty } from '../functions/formatFunctions'
 
 // ------------------
 // Components:
 // ------------------
 const componentHome = (props) => <Home {...props }/>
 const componentAbout = (props) => <About {...props }/>
+const componentRes = (props) => <ResearchProject {...props }/>
+const componentDo = (props) => <DigitalObject {...props }/>
+const componentPkg = (props) => <Package {...props }/>
+
 
 const primaryParent = 1
 
-export const SITE = { 
+export const ASSETS = { 
     logo: MainLogo,
     // favicon: Favicon,
     // fullLogo: FullLogo,
@@ -54,6 +54,7 @@ export const PAGES = [
         name: "home",
         title: "Home",
         path:"/",
+        exact: true,
         parameters: "",
         parent: primaryParent,
         disabled: false,
@@ -64,12 +65,47 @@ export const PAGES = [
         name: "about",
         title: "About",
         path:"/about",
+        exact: true,
         parameters: "",
         parent: primaryParent,
         disabled: false,
         // icon: FilterIcon,
         component: componentAbout,
-    }
+    },
+    { 
+        name: "research-project",
+        title: "Research Project",
+        path:"/res/:id",
+        exact: false,
+        parameters: ":id",
+        parent: primaryParent,
+        disabled: true,
+        // icon: FilterIcon,
+        component: componentRes,
+    },
+    { 
+        name: "digital-object",
+        title: "Digital Object",
+        path:"/do/:id",
+        exact: false,
+        parameters: ":id",
+        parent: primaryParent,
+        disabled: true,
+        // icon: FilterIcon,
+        component: componentDo,
+    },
+    { 
+        name: "package",
+        title: "Package",
+        path:"/pkg/:id",
+        exact: false,
+        parameters: ":id",
+        parent: primaryParent,
+        disabled: true,
+        // icon: FilterIcon,
+        component: componentPkg,
+    },
+    
 ]
 
 export const FILTERS = [

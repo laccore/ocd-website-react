@@ -92,6 +92,21 @@ export const makeStringToChars = x => {   // makes string into chars
 
 // export const isOfType = (type, val) => ![ , null].includes(val) && val.constructor === type;  // return true if value is of the given type, as such: is(Array, [1,2,3])
 
+
+// --------------------------------------------
+// ARRAYS
+// --------------------------------------------
+
+export const countOccurances = (arr) => arr.reduce((acc, curr) => {
+  if (typeof acc[curr] == 'undefined') {
+    acc[curr] = 1;
+  } else {
+    acc[curr] += 1;
+  }
+  return acc;
+}, {})
+
+
 // FINDS IN ARRAY: ----------------------------
 
 export const arrayIsEmpty = arr => {

@@ -161,9 +161,9 @@ const theme = createMuiTheme({
             root: {
                 display: 'flex',
                 padding: '0.5em',
-                '&:hover':{
-                    color: '#f1f1f1'
-                }
+                // '&:hover':{
+                //     color: '#f1f1f1'
+                // }
             }
         },
         MuiButton: {
@@ -181,6 +181,11 @@ const theme = createMuiTheme({
                 }
             }
         },
+        MuiList: {
+            root: {
+                width: '100%'
+            }
+        },
         MuiListItem: {
             button: {
                 '&:hover': {
@@ -188,6 +193,12 @@ const theme = createMuiTheme({
                     color: '#333333',
                     fontWeight: 600
                 }
+            }
+        },
+        MuiListItemIcon: {
+            root: {
+                color: '#2d7399',
+                minWidth: '32px'
             }
         },
         MuiSvgIcon: {
@@ -198,6 +209,13 @@ const theme = createMuiTheme({
             },
             colorPrimary: {
                 color: darken("#2d7399", 0.02)
+            }
+        },
+        MuiAccordionDetails: {
+            root: {
+                width: '100%',
+                padding: 0,
+                backgroundColor: '#e7e7e7'
             }
         }
     }

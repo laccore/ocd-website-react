@@ -1,9 +1,15 @@
 export const searchInitialState = {
-    results: []
+    results: [],
+    filters: [],
+    query: ''
+}
+
+export const filterInitialState = {
+    dataType: []
 }
 
 export default { 
-    searchInitialState 
+    searchInitialState
 }
 
 export const errorsInitialState = {

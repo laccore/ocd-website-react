@@ -1,5 +1,5 @@
 const C = require('./constants')
-const { ENV, API, VERSION, DOMAIN, SITENAME, SHORTNAME } = C.default
+const { ENV, GRAPH, OCD, VERSION, DOMAIN, SITENAME, SHORTNAME } = C.default
 
 module.exports = {
   development: {
@@ -7,6 +7,7 @@ module.exports = {
     shortName: `${SHORTNAME}-${ENV}`,
     domain: `${DOMAIN}`,
     version: `${ENV}-${VERSION}`,
-    api: `${API}`
+    graph: `${GRAPH}`,
+    ocd: `${OCD}`
   }
 }
