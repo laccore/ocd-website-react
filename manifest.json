@@ -1,6 +1,6 @@
 {
-  "short_name": "OCD Web App",
-  "name": "Open Core Data - Web Application",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,18 +8,18 @@
       "type": "image/x-icon"
     },
     {
-      "src": "OCD-logo-192.png",
+      "src": "logo192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "OCD-logo-512.png",
+      "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#00759a",
+  "theme_color": "#000000",
   "background_color": "#ffffff"
 }
