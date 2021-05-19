@@ -37,7 +37,6 @@ render(
     <FilterProvider>
     <ThemeProvider theme={theme}>
         <CssBaseline />      
-        
         <App env={config[C.ENV]} pages={PAGES} assets={ASSETS} />
     </ThemeProvider>
     </FilterProvider>

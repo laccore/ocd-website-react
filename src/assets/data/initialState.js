@@ -5,7 +5,8 @@ export const searchInitialState = {
 }
 
 export const filterInitialState = {
-    dataType: []
+    dataType: [],
+    fileType: []
 }
 
 export default { 

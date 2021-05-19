@@ -80,7 +80,7 @@ export const Package = (props) => {
 
     return(
         <>        
-            <AppBreadcrumbs {...props} />
+            <AppBreadcrumbs {...props} name={content['name']} />
             <Box 
                 bgcolor={'inherit'} 
                 position={'relative'}

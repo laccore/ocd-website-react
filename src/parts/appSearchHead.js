@@ -25,7 +25,7 @@ export const AppSearchHead = ({ env } ) => {
 
   // const { url, params, body } = defaultSearch(env.api, searchQuery)
   const [ searchQuery, setSearchQuery ] = useState("");
-  const [ searchLimit, setSearchLimit ] = useState(10);
+  const [ searchLimit, setSearchLimit ] = useState(1000);
   const [ searchOffset, setSearchOffset ] = useState(0);
 
   const query = {

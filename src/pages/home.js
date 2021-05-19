@@ -18,6 +18,7 @@ import { useStyles } from './home.styles.js'
 import config from '../config'
 import { checkFor, convertFromCamelCase } from '../functions/formatFunctions'
 import { capitalize, isEmpty } from "lodash"
+import { updateName } from '../functions/appFunctions'
 
 // ------------------------
 // Context
@@ -33,7 +34,7 @@ import { AppSearchResults } from '../parts/appSearchResults'
 
 const dataTypes = ['project', 'dataset', 'file']
 
-export const Home = () => {
+export const Home = ({ env }) => {
     
     const classes = useStyles()
     const [checked, setChecked] = useState([]) // for one filter (array of...)
@@ -128,7 +129,8 @@ export const Home = () => {
                                                                     primary={
                                                                     <>
                                                                         <Typography variant={'body2'} component={'label'}>
-                                                                            {convertFromCamelCase(String(key))}
+                                                                            {/* {convertFromCamelCase(String(key))} */}
+                                                                            {updateName(String(key))}
                                                                         </Typography>
                                                                         <Chip
                                                                             color={'secondary'}
@@ -159,7 +161,7 @@ export const Home = () => {
                     {console.log(searchState.results)}
                     
                     { (searchState.results) ? 
-                        <AppSearchResults checked={checked} setChecked={setChecked}/>
+                        <AppSearchResults checked={checked} setChecked={setChecked} env={env} />
                         : 
                         null
                     }

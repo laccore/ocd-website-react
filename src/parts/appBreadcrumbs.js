@@ -2,16 +2,15 @@ import React, { memo } from 'react'
 import PropTypes from 'prop-types'
 
 import { Box, Breadcrumbs, Link } from '@material-ui/core'
+import { updateName } from '../functions/appFunctions'
+
 
 export const AppBreadcrumbs = (props) => {
 
-    const {page, match} = props
+    const {page, match, name} = props
     const handleClick = (event) => {
         event.preventDefault()
     }
-    
-    let current
-    console.log(props)
 
     return (
         <>
@@ -19,11 +18,11 @@ export const AppBreadcrumbs = (props) => {
             <Box p={2} bgcolor={'grey.300'} boxShadow={1}>
                 <Breadcrumbs aria-label="breadcrumbs">
                     <Link color="inherit"  disabled onClick={handleClick}>
-                        {page.title}
+                        {updateName(page.title)}
                     </Link>
-                    {(match.params.id) ?
+                    {(name) ?
                         <Link color="inherit"  disabled onClick={handleClick}>
-                            {match.params.id}
+                            {name}
                         </Link>
                     : null }
                 </Breadcrumbs>

@@ -46,7 +46,9 @@ export const App = (props) => {
   const {env, pages, assets} = props
 
   return ( 
-    <Router> 
+    <Router
+      basename={`${(env.github_homepage) ? `${env.github_homepage}` : ''}`}     
+    > 
       <ErrorsProvider>
       <LoadingProvider>
         <Box className={classes.root} flexDirection='column'>

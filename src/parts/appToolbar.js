@@ -13,7 +13,7 @@ import { MainLogo } from '../assets/styles/custom-svgs'
 
 // import { MemoSimpleNavigation } from '../'
 
-export const AppToolbar = ({ menuItems }) => {
+export const AppToolbar = ({ env, menuItems }) => {
   
     const classes = useStyles()
 
@@ -33,7 +33,7 @@ export const AppToolbar = ({ menuItems }) => {
                 if(!menuItem.disabled){
                   return(
                     <li key={menuItem.name} className={clsx(classes.menuItem,'nav-item p-0 mx-2')}>
-                      <a href={menuItem.path} className={clsx(classes.menuItemLink)}>
+                      <a href={`/${(env.github_homepage) ? `${env.github_homepage}` : ''}${menuItem.path}`} className={clsx(classes.menuItemLink)}>
                           {(menuItem.name).toUpperCase()}
                       </a>
                     </li>
@@ -48,7 +48,7 @@ export const AppToolbar = ({ menuItems }) => {
 }
 
 AppToolbar.propTypes = {
-  // siteMetadata: PropTypes.array.isRequired,
+  env: PropTypes.object.isRequired,
   menuItems: PropTypes.array.isRequired
 }
 

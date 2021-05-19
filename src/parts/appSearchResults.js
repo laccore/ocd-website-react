@@ -6,9 +6,10 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Avatar, Chip, Box, Button, Divider, Fade, Link, List, ListItem, ListItemIcon, ListItemText, Modal, Typography } from '@material-ui/core/'
 import { Alert } from '@material-ui/lab'
 
-import AssignmentIcon from '@material-ui/icons/Assignment'
-import DataUsageIcon from '@material-ui/icons/DataUsage'
-import LibraryBooksIcon from '@material-ui/icons/LibraryBooks'
+// -------------------
+// Assets
+// -------------------
+import { FileIcon, PackageIcon, ProjectIcon } from '../assets/styles/custom-svgs'
 
 // -------------------
 // Styles
@@ -30,7 +31,7 @@ import { SearchContext } from '../contexts/searchContext'
 import { FilterContext } from '../contexts/filterContext'
 
 
-export function AppSearchResults({checked=[], setChecked}) {
+export function AppSearchResults({checked=[], setChecked, env}) {
 
     const classes = useStyles()
 
@@ -56,13 +57,34 @@ export function AppSearchResults({checked=[], setChecked}) {
 
         console.log(results[item])
         setChosen(item)
-    }
+    } 
     const handleClose = () => {
         setOpen(false)
         setChosen(0)
     }
 
-    const assignFilters = (currentResults) => {
+    const assignFileTypeFilter = (currentResults) => {
+        let allFileTypes = currentResults.map(result => {
+            // For DataType Filter: 
+            let dataTypeNth = (result.type.value).lastIndexOf('/')
+            let fileTypeNth = (result.name.value).lastIndexOf('.')
+            let currentDataType = (result.type.value).substring(dataTypeNth + 1)
+            let currentFileType = (result.name.value).substring(fileTypeNth + 1)
+            console.log(dataTypeNth, fileTypeNth, currentDataType, currentFileType)
+            if(currentFileType && currentDataType.toLowerCase().includes('document')){
+                return currentFileType
+            }
+        })
+
+        // let uniqueOptions = uniqueInArray(allFileTypes)
+        let occurances = countOccurances((allFileTypes).filter(named => !isEmpty(named) ) )
+
+        console.log(allFileTypes, occurances)
+        filterDispatch({ type: 'SET_FILTER_FILETYPE', fileType: occurances })
+    }
+
+
+    const assignDataTypeFilter = (currentResults) => {
         let allDataTypes = currentResults.map(result => {
             // For DataType Filter: 
             let nth = (result.type.value).lastIndexOf('/')
@@ -75,6 +97,7 @@ export function AppSearchResults({checked=[], setChecked}) {
 
         console.log(allDataTypes, occurances)
         filterDispatch({ type: 'SET_FILTER_DATATYPE', dataType: occurances })
+        // check date
     }
 
     useEffect(() => {
@@ -83,7 +106,8 @@ export function AppSearchResults({checked=[], setChecked}) {
             setResults(searchState.results)
             setFiltered(searchState.results)
             
-            assignFilters(searchState.results)
+            assignDataTypeFilter(searchState.results)
+            assignFileTypeFilter(searchState.results)
         }                    
     }, [searchState.results])
 
@@ -126,9 +150,18 @@ export function AppSearchResults({checked=[], setChecked}) {
                                 <ListItem key={`listItem-${i}`} className={ classes.listItem } button onClick={() => handleOpen(i)}>
                                      {/* component={ Link } to="/about" */}
                                     <ListItemIcon>
-                                        { (((listItem.type.value).toLowerCase()).includes('researchproject')) ? <LibraryBooksIcon color={'primary'} /> : null }
-                                        { (((listItem.type.value).toLowerCase()).includes('dataset')) ? <DataUsageIcon color={'primary'}/> : null }
-                                        { (((listItem.type.value).toLowerCase()).includes('digitaldocument')) ? <AssignmentIcon color={'primary'} /> : null }
+                                        { (((listItem.type.value).toLowerCase()).includes('researchproject')) 
+                                            ? <ProjectIcon size={'medium'} color={'primary'} /> 
+                                            : null 
+                                        }
+                                        { (((listItem.type.value).toLowerCase()).includes('dataset')) 
+                                            ? <PackageIcon size={'medium'} style={{ color: '#ffcc33' }} /> 
+                                            : null 
+                                        }
+                                        { (((listItem.type.value).toLowerCase()).includes('digitaldocument')) 
+                                            ? <FileIcon size={'medium'} color={'secondary'} /> 
+                                            : null 
+                                        }
                                     </ListItemIcon>
                                     <ListItemText 
                                         primary={`${listItem.name.value}`} 
@@ -192,7 +225,7 @@ export function AppSearchResults({checked=[], setChecked}) {
                                             <Button 
                                                 type={'link'} 
                                                 fullWidth 
-                                                href={ (results[chosen].link.href) ? results[chosen].link.href: '' } 
+                                                href={ `/${(env.github_homepage) ? `${env.github_homepage}` : ''}${(results[chosen].link.href) ? results[chosen].link.href : ''}` } 
                                                 variant="contained" 
                                                 size="large"
                                                 color="primary">
