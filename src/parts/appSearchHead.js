@@ -2,16 +2,26 @@ import React, { memo, useState, useEffect, useContext } from 'react'
 import clsx from 'clsx'
 import PropTypes from 'prop-types'
 
+// --------------
+// Styles/Assets:
+// --------------
 import { useStyles } from './appSearchHead.style'
+import {Box, Button, Container, Divider, FormControl, Grid, IconButton, InputLabel, InputBase, MenuItem, Select, Paper, Typography, Chip } from '@material-ui/core/'
 
 import SearchIcon from '@material-ui/icons/Search';
 
-import {Box, Button, Container, Divider, FormControl, Grid, IconButton, InputLabel, InputBase, MenuItem, Select, Paper, Typography, Chip } from '@material-ui/core/'
-
+// --------------
+// Functions:
+// --------------
 import config from '../config'
 import { isEmpty } from 'lodash'
 import { arrayIsEmpty } from '../functions/formatFunctions'
 import { defaultSearch } from '../functions/searchFunctions'
+import { useLocation, useHistory } from 'react-router-dom'
+
+// --------------
+// Hooks/Context:
+// --------------
 import useFetchAPI from '../hooks/useFetchAPI'
 import { SearchContext } from '../contexts/searchContext'
 
@@ -27,6 +37,9 @@ export const AppSearchHead = ({ env } ) => {
   const [ searchQuery, setSearchQuery ] = useState("");
   const [ searchLimit, setSearchLimit ] = useState(1000);
   const [ searchOffset, setSearchOffset ] = useState(0);
+
+  const location = useLocation()
+  const history = useHistory()
 
   const query = {
     value: searchQuery,
@@ -50,7 +63,16 @@ export const AppSearchHead = ({ env } ) => {
 
   const onSearchSubmit = () => {
     if(!isEmpty(searchQuery)){
+
       searchDispatch({ type: 'SET_SEARCH_QUERY', query: searchQuery })
+
+      console.log(searchState)
+      console.log(location)
+      
+      
+      if(location.pathname !== '/' || location.pathname !== ''){
+        history.push(`/${location.search}`)
+      }
     }
   }
 

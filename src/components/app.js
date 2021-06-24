@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
 
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
+
 import { useStyles } from './app.styles'
 import {Box, Container, Breadcrumbs, Link, Typography } from '@material-ui/core/'
 

@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
+import clsx from 'clsx'
 
 // -------------------
 // Material
 // -------------------
-import { Avatar, Chip, Box, Button, Divider, Fade, Link, List, ListItem, ListItemIcon, ListItemText, Modal, Typography } from '@material-ui/core/'
+import { Avatar, Chip, Box, Button, ButtonGroup, Divider, FormControl, Fade, InputLabel, Link, List, ListItem, ListItemIcon, ListItemText, Modal, MenuItem, Select, Typography } from '@material-ui/core/'
 import { Alert } from '@material-ui/lab'
 
 // -------------------
 // Assets
 // -------------------
 import { FileIcon, PackageIcon, ProjectIcon } from '../assets/styles/custom-svgs'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 
 // -------------------
 // Styles
@@ -22,7 +25,8 @@ import { useStyles } from './appSearchResults.styles'
 // -------------------
 import { isEmpty } from 'lodash'
 // import { isEmpty } from 'lodash'
-import { uniqueInArray, countOccurances, arrayIsEmpty } from '../functions/formatFunctions' 
+import { uniqueInArray, countOccurances, arrayIsEmpty, convertFromCamelCase } from '../functions/formatFunctions' 
+import { updateName } from '../functions/appFunctions' 
 
 // -------------------
 // Context/hooks
@@ -42,6 +46,12 @@ export function AppSearchResults({checked=[], setChecked, env}) {
     const [ filtered, setFiltered ] = useState()
     const [ open, setOpen ] = useState(false)
     const [ chosen, setChosen ] = useState(0)
+    
+    const [ sortOption, setSortOption ] = useState('')
+    const [ sortOptions, setSortOptions ] = useState([])
+    const [ sortDirection, setSortDirection ] = useState(false)
+
+    
 
     const handleOpen = (item) => {
         setOpen(true)
@@ -63,6 +73,15 @@ export function AppSearchResults({checked=[], setChecked, env}) {
         setChosen(0)
     }
 
+    const handleSortSelection = (event) => {
+        setSortOption(event.target.value)
+    }
+
+    const handleSorting = () => {
+        setSortDirection(!sortDirection)
+    }
+    
+
     const assignFileTypeFilter = (currentResults) => {
         let allFileTypes = currentResults.map(result => {
             // For DataType Filter: 
@@ -79,7 +98,7 @@ export function AppSearchResults({checked=[], setChecked, env}) {
         // let uniqueOptions = uniqueInArray(allFileTypes)
         let occurances = countOccurances((allFileTypes).filter(named => !isEmpty(named) ) )
 
-        console.log(allFileTypes, occurances)
+        // console.log(allFileTypes, occurances)
         filterDispatch({ type: 'SET_FILTER_FILETYPE', fileType: occurances })
     }
 
@@ -95,7 +114,7 @@ export function AppSearchResults({checked=[], setChecked, env}) {
         // let uniqueOptions = uniqueInArray(allDataTypes)
         let occurances = countOccurances(allDataTypes)
 
-        console.log(allDataTypes, occurances)
+        // console.log(allDataTypes, occurances)
         filterDispatch({ type: 'SET_FILTER_DATATYPE', dataType: occurances })
         // check date
     }
@@ -106,6 +125,16 @@ export function AppSearchResults({checked=[], setChecked, env}) {
             setResults(searchState.results)
             setFiltered(searchState.results)
             
+            setSortOptions( (searchState.results[0]) 
+                ? Object.keys(searchState.results[0]).filter(key => 
+                    key == "name" ||
+                    key == "description" )
+                    // key == "name" || 
+                    // key == "description" || 
+                    // key == "type" )
+                : []
+            )
+
             assignDataTypeFilter(searchState.results)
             assignFileTypeFilter(searchState.results)
         }                    
@@ -122,11 +151,17 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                     
                     let filteredResults = []
                     checked.map( item => {
-                        let currentChecked = results.filter( result => ((result.type.value).toLowerCase()).includes((item.toLowerCase())) ) 
+                        
+                        let currentChecked = results.filter( result => 
+                            ((result.type.value).toLowerCase()).includes((item.toLowerCase())) ||
+                            ((result.name.value).toLowerCase()).includes((item.toLowerCase()))
+                        ) 
+                                                
                         if(currentChecked && currentChecked.length > 0){
                             filteredResults.push(...currentChecked)
                         }
                     })
+                    console.log(filteredResults)
                     setFiltered(filteredResults)
                 }
             } 
@@ -134,13 +169,97 @@ export function AppSearchResults({checked=[], setChecked, env}) {
 
     }, [checked])
 
+    useEffect(() => {
+        
+        if(Array.isArray(filtered) && filtered.length !== 0){
+            
+            console.log(sortDirection, sortOption, sortOptions)
+            let currentFiltered = (filtered) ? filtered : []
+            let currentSortOption = (sortOption) ? sortOption : 'name'
+            
+            if(sortDirection){
+                console.log(currentFiltered)
+                console.log(currentFiltered[0].name.value)
+                currentFiltered.sort((a,b) => (a[currentSortOption].value > b[currentSortOption].value) 
+                    ? 1 : -1 )
+            } else {
+                console.log(currentFiltered)
+                console.log(currentFiltered[0].name.value)
+                currentFiltered.sort((a,b) => (a[currentSortOption].value < b[currentSortOption].value) ? 1 : -1)
+            }
+            setFiltered(currentFiltered)
+        }
+
+    }, [sortDirection])
     
+
     // const options = choices.filter(choice => input === '' || (choice.name).includes(input))
 
 
     return (
-        // <Box className={classes.simpleListBox} py={4}>
         <>
+            <Box className={classes.simpleListBox} p={1} display={'flex'} justifyContent={'flex-end'} >
+                
+                <Box display={'flex'} border={1} borderColor={'primary'} borderRadius={'borderRadius'}>
+                    <FormControl 
+                        className={ classes.formControl } 
+                        // style={{ minWidth: '200px' }}
+                    >
+                    
+                        <Select
+                            id={`dataType-selection`}
+                            labelId={`dataType-selection`}
+                            color={'primary'}
+                            className={clsx(classes.sortFormSelect)}
+                            // multiple
+                            // disabled={variableValues.units.length <= 1}
+                            // value={
+                            //     (currentChoice['units'])
+                            //         ? currentChoice['units']
+                            //         : []
+                            // }
+                            value={sortOption}
+                            displayEmpty
+                            // defaultValue={Object.keys(filterState.dataType)[0]}
+                            onChange={handleSortSelection}
+                        >
+                            <MenuItem value=''>
+                                <em>Sort All</em>
+                            </MenuItem>
+
+                            { sortOptions.map( (item, i) => 
+                                <MenuItem 
+                                    key={`menu-item-selection-${item}`}
+                                    value={item}
+                                    selected={ i==0 ? true : false }>
+                                    {`Sort by ${item} `}
+                                </MenuItem>
+                            )} 
+                           
+                            
+                        </Select>
+                    </FormControl>
+
+                    <Divider orientation="vertical" flexItem />
+
+                    <Button
+                        color={'primary'}
+                        variant={'outlined'}
+                        size="small"
+                        className={classes.sortButton}
+                        aria-controls={sortDirection ? 'sort-descending' : 'sort-ascending'}
+                        title={sortDirection ? 'sort descending' : 'sort ascending'}
+                        aria-label="select sorting direction"
+                        onClick={handleSorting}
+                    >
+                        {(sortDirection) ? <ArrowDownwardIcon /> : <ArrowUpwardIcon /> }
+                    </Button>
+        
+
+                </Box>
+
+            </Box>
+            
             { (filtered) ? 
                 (Array.isArray(filtered) && filtered.length !== 0) ?
                     <>
