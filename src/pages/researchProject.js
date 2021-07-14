@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext, useMemo } from "react"
+import React, {useEffect, useState, useContext, useMemo, useRef, createRef } from "react"
 import clsx from 'clsx'
 
 import { MapContainer, TileLayer, WMSTileLayer, Marker, Popup, useMap } from "react-leaflet"
@@ -25,7 +25,7 @@ import DataGrid, {
 // ------------------------
 import {  Accordion, AccordionSummary, AccordionDetails, Box, Button, Chip, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, FormControl, InputLabel, InputBase, List, ListItem, ListItemIcon, ListItemText, Select, Typography } from '@material-ui/core/'
 
-// import { Alert } from '@material-ui/lab'
+import { Alert } from '@material-ui/lab'
 
 // ------------------------
 // Styles/Assets:
@@ -37,7 +37,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 // Configuration
 // ------------------------
 import config from '../config'
-import { arrayIsEmpty, checkFor, convertFromCamelCase, groupBy, objectHasKeys } from '../functions/formatFunctions'
+import { arrayIsEmpty, checkFor, convertFromCamelCase, groupBy, isObjEmpty, objectHasKeys } from '../functions/formatFunctions'
 import { splitUrlPathname } from '../functions/appFunctions'
 import { componentSearch, researchDatasets, researchBorehole } from '../functions/searchFunctions'
 import { capitalize, isEmpty, map } from "lodash"
@@ -106,8 +106,12 @@ export const ResearchProject = (props) => {
     const [ groupedDatasets, setGroupedDatasets ] = useState([])
 
     const [ places, setPlaces ] = useState([])
-    const [bounds, setBounds] = useState()
     const [ mapHeight, setMapHeight ] = useState()
+
+    const [zoom, setZoom] = useState(4)
+    // const [bounds, setBounds] = useState({})
+    const [position, setPosition] = useState([4,114])
+    const mapRef = createRef()
 
     const component = (page.path).split('/').filter(q => q != "")[0]
     const id = match.params.id
@@ -117,13 +121,13 @@ export const ResearchProject = (props) => {
         setOpen(true)
       }
     
-    const allPlacesBounds = useMemo(() => { 
-        // const bounds = latLngBounds()
-        // places.forEach((place) => bounds.extend(place))
-        // return bounds.pad(0.1)
+    // const allPlacesBounds = useMemo(() => { 
+    //     // const bounds = latLngBounds()
+    //     // places.forEach((place) => bounds.extend(place))
+    //     // return bounds.pad(0.1)
 
         
-    }, [places])
+    // }, [places])
 
     const updateDimensions = () => {
         const height = (window.innerWidth >= 992) 
@@ -131,13 +135,27 @@ export const ResearchProject = (props) => {
         setMapHeight(height)
     }
 
-    // useEffect(() => {
-    //     if(!isEmpty(places)){
-    //         console.log(places)
-    //     }
-    // }, [places])
+    useEffect( () => {
+        if(!isEmpty(places)){
+            console.log(places)
+            let currentBounds = latLngBounds()
+            places.forEach(place => {
+                console.log(place)
+                currentBounds.extend(place)
+            })
+
+            console.log(currentBounds)
+            console.log(places[0])
+            
+            setPosition(places[0])
+        }
+        // setZoom(10)
+    }, [places])
     
 
+    useEffect(() => {
+        console.log(mapRef)
+    }, [mapRef])
     // --------------------------
     // Fetch project content
     // --------------------------
@@ -311,14 +329,14 @@ export const ResearchProject = (props) => {
                 borderRadius={4} 
                 // className={clsx(classes.boxSearchResults)}
             >   
-                { (content) ? 
+                { (content && !isObjEmpty(content)) ? 
                     <>
-                        <Box p={4} justifyContent={'center'} alignItems={'center'} bgcolor={'grey.200'}>
+                        <Box p={4} justifyContent={'center'} alignItems={'center'} bgcolor={'grey.100'}>
                             <Typography variant={'h5'} component={'h2'}>
                                 {content['name']}
                             </Typography>
                             <Box my={2}>
-                                <Chip 
+                                <Chip                                     
                                     label={
                                         <>
                                             <Typography variant={'subtitle2'} component={'span'}>
@@ -337,58 +355,64 @@ export const ResearchProject = (props) => {
                         </Box>
 
                         <Grid container>
-                            <Grid xs={12} sm={6} item key={`map-section`}>
+                            <Grid xs={12} sm={12} item key={`map-section`}>
                                 <Box height={'100%'} style={{ overflow: 'hidden'}}>
-                                    <MapContainer
-                                        className={classes.leafletContainer}
-                                        style={{ height: mapHeight }}
-                                        center={[60.505, -135.09]} 
-                                        // bounds={allPlacesBounds}
-                                        zoom={3}
-                                        
-                                    >
-                                        { (places && !arrayIsEmpty(places) && places.length > 0) ?
-                                            <>
-                                                { places.map( (place, index) => 
-                                                    <>
-                                                    {/* {console.log(place)} */}
-                                                        <Marker
-                                                            key={`place-${index}`}
-                                                            position={place} 
-                                                            // eventHandlers={{ click: () => showPreview(place) }}
-                                                        >
-                                                            {/* show place's title on hover the marker */}
-                                                            {/* <Tooltip>{place.title}</Tooltip>  */}
-                                                            <Popup> 
-                                                                <Typography variant="subtitle1" component="p">
-                                                                    {`Latitude: ${place[0]}, Longitude: ${place[1]}`}
-                                                                </Typography>  
-                                                            </Popup>
-                                                        </Marker>
-                                                        
-                                                    </>
-                                                ) }
-                                            </>
-                                            : null
-                                        }
-                                        {/* <TileLayer
-                                            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                        /> */}
-                                        <WMSTileLayer
-                                            url={'https://www.gmrt.org/services/mapserver/wms_merc'}
-                                            layers={'topo'}
-                                            format={'jpeg'}
-                                            SRS={'EPSG:4326'}
-                                            wrapX={true}
-                                            attribution='&copy; <a href="http://gmrt.org/copyright">GMRT</a> contributors'
-                                        />
-
-                                        
-                                    </MapContainer>
+                                    { (places && !arrayIsEmpty(places) && places.length > 0) ?
+                                        <MapContainer
+                                            className={classes.leafletContainer}
+                                            style={{ height: mapHeight }}
+                                            // center={[60.505, -135.09]} 
+                                            center={position}
+                                            // center={places[0][0], places[0][1]}
+                                            // bounds={bounds}
+                                            zoom={zoom}
+                                            // ref={mapRef}
+                                            
+                                            // maxBounds={}
+                                            // maxZoom={}
+                                            
+                                        >
+                                            { places.map( (place, index) => 
+                                                <>
+                                                {/* {console.log(place)} */}
+                                                    <Marker
+                                                        key={`place-${index}`}
+                                                        position={place} 
+                                                        // eventHandlers={{ click: () => showPreview(place) }}
+                                                    >
+                                                        {/* show place's title on hover the marker */}
+                                                        {/* <Tooltip>{place.title}</Tooltip>  */}
+                                                        <Popup> 
+                                                            <Typography variant="subtitle1" component="p">
+                                                                {`Latitude: ${place[0]}, Longitude: ${place[1]}`}
+                                                            </Typography>  
+                                                        </Popup>
+                                                    </Marker>
+                                                    
+                                                </>
+                                            ) }
+                                            
+                                            {/* <TileLayer
+                                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                            /> */}
+                                            <WMSTileLayer
+                                                url={'https://www.gmrt.org/services/mapserver/wms_merc'}
+                                                layers={'topo'}
+                                                format={'jpeg'}
+                                                SRS={'EPSG:4326'}
+                                                wrapX={true}
+                                                attribution='&copy; <a href="http://gmrt.org/copyright">GMRT</a> contributors'
+                                            />
+                                        </MapContainer>
+                                    : 
+                                        <Alert severity={'info'}>
+                                            'No markers available for this project.'
+                                        </Alert>  
+                                    }
                                 </Box>
                             </Grid>
-                            <Grid xs={12} sm={6} item key={`metadata-section`}>
+                            <Grid xs={12} sm={12} item key={`metadata-section`}>
                                 <List component="ul" aria-label="main mailbox folders">
                                     { Object.entries(content).map(([key,val]) => {
                                         if(csdco.includes(key) && !isEmpty(val)){
@@ -422,114 +446,127 @@ export const ResearchProject = (props) => {
                             </Grid>
                         </Grid>
 
-                        <Box p={3} style={{ backgroundColor: '#fff'}}>
-                            <Box py={2} display={'flex'} width={'100%'} flexDirection={'row'}>
-                                <Typography variant={'h6'} component={'h4'} style={{ flex: 'auto' }}>
-                                    File Package(s)
-                                </Typography>
-                                <Button
-                                    variant={'outlined'}
-                                    size={'small'}
-                                    color={'primary'}
-                                    onClick={handleClickOpen}
-                                    style={{ margin: '0 8px', justifySelf: 'flex-end' }}
-                                >
-                                    Descriptions
-                                </Button>
-                            </Box>
-
-                            <DescriptionsDialog open={open} setOpen={setOpen}/>
-
-                            { Object.entries(groupedDatasets).map(([datasetKey,datasetValue],datasetIndex) => 
-                                <Accordion>
-                                    {console.log(datasetKey, datasetValue)}
-                                    <AccordionSummary
-                                        expandIcon={<ExpandMoreIcon />}
-                                        aria-controls={`dataset-content-${datasetIndex}`}
-                                        id={`dataset-header-${datasetIndex}`}
+                        {!(isObjEmpty(groupedDatasets)) ? 
+                            <Box p={3} bgcolor={'grey.100'}>
+                                <Box py={2} display={'flex'} width={'100%'} flexDirection={'row'}>
+                                    <Typography variant={'h6'} component={'h4'} style={{ flex: 'auto' }}>
+                                        File Package(s)
+                                    </Typography>
+                                    <Button
+                                        variant={'outlined'}
+                                        size={'small'}
+                                        color={'primary'}
+                                        onClick={handleClickOpen}
+                                        style={{ margin: '0 8px', justifySelf: 'flex-end' }}
                                     >
-                                        <Typography variant={'subtitle1'} component={'h6'}>
-                                            {datasetKey} 
-                                            <Chip 
-                                                color={'primary'}
-                                                size={'small'}
-                                                label={datasetValue.length} 
-                                            />
-                                        </Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <List disablePadding> 
-                                            {datasetValue.map(file => 
-                                                <ListItem 
-                                                    button
-                                                    component={'a'}
-                                                    disableGutters
-                                                    href={(!arrayIsEmpty(file)) 
-                                                        ? `/${file.file[file.file.length - 2]}/${file.file[file.file.length - 1]}` 
-                                                        : `#`
-                                                    } 
-                                                >
-                                                    <ListItemText
-                                                        primary={ 
-                                                            (!isEmpty(file.description) && !isEmpty(file.fileName)) 
-                                                                ? `${file.description} - ${file.fileName}` 
-                                                                : "" 
-                                                        }
-                                                    >
+                                        Descriptions
+                                    </Button>
+                                </Box>
 
-                                                    </ListItemText>
-                                                </ListItem>
-                                            )}
-                                        </List>
-                                    </AccordionDetails>
-                                </Accordion>
-                            )}
-                         
-                        </Box>
+                                <DescriptionsDialog open={open} setOpen={setOpen}/>
+
+                                { Object.entries(groupedDatasets).map(([datasetKey,datasetValue],datasetIndex) => 
+                                    <Accordion>
+                                        {console.log(datasetKey, datasetValue)}
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls={`dataset-content-${datasetIndex}`}
+                                            id={`dataset-header-${datasetIndex}`}
+                                        >
+                                            <Typography variant={'subtitle1'} component={'h6'}>
+                                                {datasetKey} 
+                                                <Chip 
+                                                    color={'primary'}
+                                                    size={'small'}
+                                                    label={datasetValue.length} 
+                                                />
+                                            </Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <List disablePadding> 
+                                                {datasetValue.map(file => 
+                                                    <ListItem 
+                                                        button
+                                                        component={'a'}
+                                                        disableGutters
+                                                        href={(!arrayIsEmpty(file)) 
+                                                            ? `/${file.file[file.file.length - 2]}/${file.file[file.file.length - 1]}` 
+                                                            : `#`
+                                                        } 
+                                                    >
+                                                        <ListItemText
+                                                            primary={ 
+                                                                (!isEmpty(file.description) && !isEmpty(file.fileName)) 
+                                                                    ? `${file.description} - ${file.fileName}` 
+                                                                    : "" 
+                                                            }
+                                                        >
+
+                                                        </ListItemText>
+                                                    </ListItem>
+                                                )}
+                                            </List>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                )}
+                            </Box>
+                            :
+                            <Alert severity={'info'}>
+                                'No files available for this project.'
+                            </Alert> 
+                        }
 
                         <Divider  />
 
-                        <Box p={3} style={{ backgroundColor: '#fff'}}>
-                            <Typography variant={'h6'} component={'h4'}>
-                                Borehole(s)
-                            </Typography>
-                            <DataGrid
-                                dataSource={boreholeRows}
-                                // defaultColumns={boreholeColumns}
-                                allowColumnReordering={true}
-                                showBorders={true}
-                            >
-                    
-                                {/* <ColumnChooser enabled={true} /> */}
-                                <ColumnFixing enabled={true} />
-                                {/* <Column caption="Parent" dataField="child" dataType="string" cellRender={ BoreholeUrl } /> */}
-                                <Column caption="Hole ID" dataField="holeid" dataType="string" />
-                                <Column caption="IGSN" dataField="igsn" dataType="string" cellRender={ IGSNUrl } />
-                                {/* <Column caption="LID" dataField="lid" dataType="string" /> */}
-                                <Column caption="Location" dataField="location" dataType="string" />
-                                <Export 
-                                    enabled={true} 
-                                    // allowExportSelectedData={true} 
-                                />
-                                <GroupPanel visible={true} />
-                                <Grouping autoExpandAll={true} />
-                                <SearchPanel 
-                                    visible={true}
-                                    width={240}
-                                    placeholder="Search..." />
-                                <Sorting mode="multiple" />
-                                <Paging defaultPageSize={20} />
-                                <Pager
-                                    showPageSizeSelector={true}
-                                    allowedPageSizes={[20, 50, 100]}
-                                    showInfo={true} />
-                            </DataGrid>
-                        </Box>
-
+                        {!arrayIsEmpty(boreholeRows) ?
+                            <Box p={3} bgcolor={'#fff'}>
+                                <Typography variant={'h6'} component={'h4'}>
+                                    Borehole(s)
+                                </Typography>
+                                <DataGrid
+                                    dataSource={boreholeRows}
+                                    // defaultColumns={boreholeColumns}
+                                    allowColumnReordering={true}
+                                    showBorders={true}
+                                >
                         
+                                    {/* <ColumnChooser enabled={true} /> */}
+                                    <ColumnFixing enabled={true} />
+                                    {/* <Column caption="Parent" dataField="child" dataType="string" cellRender={ BoreholeUrl } /> */}
+                                    <Column caption="Hole ID" dataField="holeid" dataType="string" />
+                                    <Column caption="IGSN" dataField="igsn" dataType="string" cellRender={ IGSNUrl } />
+                                    {/* <Column caption="LID" dataField="lid" dataType="string" /> */}
+                                    <Column caption="Location" dataField="location" dataType="string" />
+                                    <Export 
+                                        enabled={true} 
+                                        // allowExportSelectedData={true} 
+                                    />
+                                    <GroupPanel visible={true} />
+                                    <Grouping autoExpandAll={true} />
+                                    <SearchPanel 
+                                        visible={true}
+                                        width={240}
+                                        placeholder="Search..." />
+                                    <Sorting mode="multiple" />
+                                    <Paging defaultPageSize={20} />
+                                    <Pager
+                                        showPageSizeSelector={true}
+                                        allowedPageSizes={[20, 50, 100]}
+                                        showInfo={true} />
+                                </DataGrid>
+                            </Box>
+                        :
+                            <Alert severity={'info'}>
+                                'No borehole data available for this project.'
+                            </Alert> 
+                        }
                     </>
                     
-                : null }
+                : 
+                    <Alert severity={'error'}>
+                        'No project available for this identifier.'
+                    </Alert>                             
+                }
             </Box>
         </>
     )

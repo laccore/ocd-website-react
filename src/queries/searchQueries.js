@@ -5,7 +5,7 @@ export const queryToSearchParams = (query, size, offset) =>
     SELECT DISTINCT ?s ?type ?score ?name ?lit ?description \
     WHERE { \
     ?lit bds:search \"${query.toLowerCase().toString()}\" . \
-    ?lit bds:matchAllTerms "true" . \
+    ?lit bds:matchAllTerms "false" . \
     ?lit bds:relevance ?score . \
     ?s ?p ?lit . \
     ?s schema:name ?name . \

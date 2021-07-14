@@ -4,7 +4,7 @@ import clsx from 'clsx'
 // -------------------
 // Material
 // -------------------
-import { Avatar, Chip, Box, Button, ButtonGroup, Divider, FormControl, Fade, InputLabel, Link, List, ListItem, ListItemIcon, ListItemText, Modal, MenuItem, Select, Typography } from '@material-ui/core/'
+import { Avatar, Chip, LinearProgress, Box, Button, ButtonGroup, Divider, FormControl, Fade, InputLabel, Link, List, ListItem, ListItemIcon, ListItemText, Modal, MenuItem, Select, Typography } from '@material-ui/core/'
 import { Alert } from '@material-ui/lab'
 
 // -------------------
@@ -33,6 +33,7 @@ import { updateName } from '../functions/appFunctions'
 // -------------------
 import { SearchContext } from '../contexts/searchContext'
 import { FilterContext } from '../contexts/filterContext'
+import { LoadingContext } from '../contexts/loadingContext'
 
 
 export function AppSearchResults({checked=[], setChecked, env}) {
@@ -42,6 +43,8 @@ export function AppSearchResults({checked=[], setChecked, env}) {
     const [ searchState, searchDispatch ] = useContext(SearchContext)
     const [ filterState, filterDispatch ] = useContext(FilterContext)
 
+    const [ loadingState, loadingDispatch ] = useContext(LoadingContext)
+
     const [ results, setResults ] = useState()
     const [ filtered, setFiltered ] = useState()
     const [ open, setOpen ] = useState(false)
@@ -50,7 +53,6 @@ export function AppSearchResults({checked=[], setChecked, env}) {
     const [ sortOption, setSortOption ] = useState('')
     const [ sortOptions, setSortOptions ] = useState([])
     const [ sortDirection, setSortDirection ] = useState(false)
-
     
 
     const handleOpen = (item) => {
@@ -120,24 +122,38 @@ export function AppSearchResults({checked=[], setChecked, env}) {
     }
 
     useEffect(() => {
-        if(searchState.results){
-            // console.log(searchState.results)
-            setResults(searchState.results)
-            setFiltered(searchState.results)
-            
-            setSortOptions( (searchState.results[0]) 
-                ? Object.keys(searchState.results[0]).filter(key => 
-                    key == "name" ||
-                    key == "description" )
-                    // key == "name" || 
-                    // key == "description" || 
-                    // key == "type" )
-                : []
-            )
+        
+        (async () => {
 
-            assignDataTypeFilter(searchState.results)
-            assignFileTypeFilter(searchState.results)
-        }                    
+            if(searchState.results){
+                
+                loadingDispatch({ type: 'SET_FILTERS_LOADING', action: true})
+                
+                console.log(loadingState)
+
+                setResults(searchState.results)
+                setFiltered(searchState.results)
+                
+                setSortOptions( (searchState.results[0]) 
+                    ? Object.keys(searchState.results[0]).filter(key => 
+                        key == "name" ||
+                        key == "description" )
+                        // key == "name" || 
+                        // key == "description" || 
+                        // key == "type" )
+                    : []
+                )
+    
+                await assignDataTypeFilter(searchState.results)
+                await assignFileTypeFilter(searchState.results)
+
+                loadingDispatch({ type: 'SET_FILTERS_LOADING', action: false})
+
+                console.log(loadingState)
+            }  
+
+        })()
+
     }, [searchState.results])
 
 
@@ -254,7 +270,6 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                     >
                         {(sortDirection) ? <ArrowDownwardIcon /> : <ArrowUpwardIcon /> }
                     </Button>
-        
 
                 </Box>
 
@@ -361,9 +376,14 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                     : 
                     <Box p={2}>
                         <Alert variant="outlined" severity="warning">
-                        No results! Please filter your search again.
+                            No results! Please filter your search again.
                         </Alert>
                     </Box>
+                : null
+            }
+
+            { ((loadingState.filtersLoading || loadingState.searchLoading) && arrayIsEmpty(filtered)) 
+                ? <LinearProgress color={'primary'} />
                 : null
             }
 

@@ -23,9 +23,9 @@ export const About = () => {
   const classes = useStyles()
 
   return(
-        <Box p={4} bgcolor={"white.main"} boxShadow={2}>
+        <Box p={4} bgcolor={"white.main"} boxShadow={2} height={'100%'} minHeight={'50vmin'}>
             <Box p={0} textAlign={'center'}>
-                <Typography variant={'h3'} component={'h3'} color={'grey.900'} gutterBottom>
+                <Typography variant={'h4'} component={'h3'} color={'grey.900'} gutterBottom>
                     About Us
                 </Typography>
             </Box>

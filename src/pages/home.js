@@ -4,7 +4,7 @@ import clsx from 'clsx'
 // ------------------------
 // Material
 // ------------------------
-import {  Accordion, AccordionSummary, AccordionDetails, Box, Checkbox, Grid, FormControl, IconButton, InputLabel, InputBase, List, ListItem, ListItemSecondaryAction, ListItemIcon, ListItemText, Select, Typography, Chip } from '@material-ui/core/'
+import {  Accordion, AccordionSummary, AccordionDetails, Box, Checkbox, Grid, FormControl, IconButton, InputLabel, InputBase, LinearProgress, List, ListItem, ListItemSecondaryAction, ListItemIcon, ListItemText, Select, Typography, Chip } from '@material-ui/core/'
 import { Alert } from '@material-ui/lab'
 
 // ------------------------
@@ -26,11 +26,13 @@ import { updateName } from '../functions/appFunctions'
 // ------------------------
 import { SearchContext } from '../contexts/searchContext'
 import { FilterContext } from '../contexts/filterContext'
-
+import { LoadingContext } from '../contexts/loadingContext'
+    
 // ------------------------
 // Parts/Components
 // ------------------------
 import { AppSearchResults } from '../parts/appSearchResults'
+import { searchHeadContent } from '../assets/data/pageContent'
 
 
 const dataTypes = ['project', 'dataset', 'file']
@@ -42,6 +44,8 @@ export const Home = ({ env }) => {
 
     const [ searchState, searchDispatch ] = useContext(SearchContext)
     const [ filterState, filterDispatch ] = useContext(FilterContext)
+    
+    const [ loadingState, loadingDispatch ] = useContext(LoadingContext)
 
     const handleToggle = (value) => () => {
       const currentIndex = checked.indexOf(value)
@@ -73,6 +77,10 @@ export const Home = ({ env }) => {
                 borderRadius={4} 
                 className={clsx(classes.boxSearchResults)}
             >
+                {((loadingState.filtersLoading || loadingState.searchLoading) &&  
+                    <LinearProgress color={'primary'} style={{ height: 10 }}/>   
+                )}
+                
                 <Grid container>
                     <Grid 
                         key={`search-filter`} 
@@ -81,7 +89,9 @@ export const Home = ({ env }) => {
                         
                         {/* Add filters, change to index for expand */}
                         
-                        { (checkFor(filterState) && !arrayIsEmpty(searchState.results) ) ?  
+                        { ( checkFor(filterState) && 
+                            !arrayIsEmpty(searchState.results) && 
+                            (!loadingState.filtersLoading || !loadingState.searchLoading) ) ?  
                                 <>
                                     {console.log(filterState)}
                                     { Object.entries(filterState).map(([filterKey, filterVal], i) => 
@@ -194,16 +204,27 @@ export const Home = ({ env }) => {
                             <AppSearchResults checked={checked} setChecked={setChecked} env={env} />
                         )}
                     </Grid>
-                </Grid>
-                
-                { (arrayIsEmpty(searchState.results) && 
-                    <Box p={4} minHeight={'40vmin'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
-                        <Typography variant={'h3'} component={'h2'} gutterBottom style={{ textAlign: 'center'}}>
-                            Welcome to Open Core Data
-                        </Typography>
-                        <Typography variant={'body1'} component={'p'}>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                        </Typography>
+                </Grid>                
+
+                { ( arrayIsEmpty(searchState.results) &&
+                    (!loadingState.filtersLoading && !loadingState.searchLoading) &&
+                    <Box p={0} minHeight={'40vmin'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+                        
+                        <Box width={'100%'} p={4}>
+                            <Typography 
+                                variant={'h4'} 
+                                component={'h2'} 
+                                gutterBottom 
+                                style={{ textAlign: 'center'}}
+                            >
+                                Welcome to Open Core Data
+                            </Typography>
+                            <Typography variant={'body1'} component={'p'}>
+                                { searchHeadContent.heading }
+                            </Typography>
+                        </Box>
+                        <Box className={classes.homeHeader}></Box>
+
                     </Box>
                 )}
             </Box>

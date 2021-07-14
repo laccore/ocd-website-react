@@ -6,6 +6,6 @@ export const useStyles = makeStyles(theme => ({
     leafletContainer: {
         width: '100%',
         // minHeight: '100%',
-        height: '50vh'
+        height: '40vh'
     }
 }))
