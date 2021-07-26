@@ -57,19 +57,17 @@ export function AppSearchResults({checked=[], setChecked, env}) {
 
     const handleOpen = (item) => {
         setOpen(true)
+        setChosen(item)
+    } 
 
-        let sNth = (results[item].s.value).split('/')
+    const handleRedirect = (item) => {
+        let sNth = (item.s.value).split('/')
         let id = sNth.pop()
         let component = sNth.pop()
         
-        let link = {
-            "href": `/${component}/${id}`
-        }
-        results[item].link = link
+        window.location.href =  `/${component}/${id}`
+    }
 
-        console.log(results[item])
-        setChosen(item)
-    } 
     const handleClose = () => {
         setOpen(false)
         setChosen(0)
@@ -281,7 +279,13 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                         <List classes={{ root: classes.list}}>
                 
                             { (filtered).map((listItem, i) => 
-                                <ListItem key={`listItem-${i}`} className={ classes.listItem } button onClick={() => handleOpen(i)}>
+                                <ListItem 
+                                    key={`listItem-${i}`} 
+                                    className={ classes.listItem } 
+                                    button 
+                                    onClick={() => handleRedirect(listItem)}
+                                    // onClick={() => handleOpen(listItem)}
+                                >
                                      {/* component={ Link } to="/about" */}
                                     <ListItemIcon>
                                         { (((listItem.type.value).toLowerCase()).includes('researchproject')) 
@@ -299,12 +303,42 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                                     </ListItemIcon>
                                     <ListItemText 
                                         primary={`${listItem.name.value}`} 
-                                        secondary={`${(listItem.description.value).slice(0,60)}...`}
+                                        secondary={
+                                            <>
+                                                { ( ((listItem.type.value).toLowerCase()).includes('researchproject') ) 
+                                                    ?
+                                                    <>
+                                                        <Typography 
+                                                            component={'p'} 
+                                                            variant={'body2'}
+                                                        >
+                                                            { (listItem.description.value).slice(0,60) }
+                                                        </Typography>
+                                                        {/* <Link 
+                                                            onClick={() => handleOpen(listItem)}
+                                                        >
+                                                            More Details
+                                                        </Link> */}
+                                                    </>
+                                                    : null
+                                                }
+                                            
+                                                {  ( ((listItem.type.value).toLowerCase()).includes('dataset') ) 
+                                                    ? listItem.description.value
+                                                    : null
+                                                }
+                                            
+                                                {/* (((listItem.type.value).toLowerCase()).includes('digitaldocument')) */}
+                                            
+                                            </>
+                                        }          
+                                            
                                     />
                                 </ListItem>
                             )}
-                        
+
                         </List> 
+                        
                         <Box p={0} bgcolor={'grey.200'} display={'flex'}>
                             <Box p={2}>
                                 <Typography variant="subtitle2" component="h6" gutterBottom>
@@ -318,60 +352,7 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                                 </Typography>
                             </Box>
                         </Box>
-                        <Modal
-                            open={open}
-                            onClose={handleClose}
-                            classes={classes.modal}
-                            aria-labelledby="simple-modal-title"
-                            aria-describedby="simple-modal-description"
-                        >
-                            <Fade in={open}>
-                                <div className={classes.paperModal}>
-                                    <div id="score">
-                                        <Chip 
-                                            variant="outlined" 
-                                            color="primary" 
-                                            label={ results[chosen].score.value } 
-                                            avatar={<Avatar>S</Avatar>}
-                                        />
-                                    </div>
-                                    <br/>
-                                    <div id="name">
-                                        <Typography className={classes.title} color="primary" gutterBottom variant="h5" component="h4">
-                                            { results[chosen].name.value }
-                                        </Typography>
-                                    </div>
-                                    <hr/>
-                                    <div id="description">
-                                        <Typography variant="subtitle2" component="h6">
-                                            { results[chosen].description.value }
-                                        </Typography>
-                                    </div>
-                                    <hr/>
-                                    <div id="lit">
-                                        <Typography variant="body1" component="p">
-                                            { results[chosen].name.value }
-                                        </Typography>
-                                    </div>
-                                    <br/>
-                                    <div id="uri">
-                                        { (results[chosen].link) ? 
-                                            <Button 
-                                                type={'link'} 
-                                                fullWidth 
-                                                href={ `/${(env.github_homepage) ? `${env.github_homepage}` : ''}${(results[chosen].link.href) ? results[chosen].link.href : ''}` } 
-                                                variant="contained" 
-                                                size="large"
-                                                color="primary">
-                                                {/* { results[chosen].s.type } */}
-                                                More Info
-                                            </Button>
-                                        : null }
-                                    </div>
-                                    
-                                </div>
-                            </Fade>
-                        </Modal>
+                        
                     </>
                     : 
                     <Box p={2}>
@@ -380,6 +361,63 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                         </Alert>
                     </Box>
                 : null
+            }
+
+            { (chosen) &&
+                <Modal
+                    open={open}
+                    onClose={handleClose}
+                    classes={classes.modal}
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                >
+                    <Fade in={open}>
+                        <div className={classes.paperModal}>
+                            <div id="score">
+                                <Chip 
+                                    variant="outlined" 
+                                    color="primary" 
+                                    label={ chosen.score.value } 
+                                    avatar={<Avatar>S</Avatar>}
+                                />
+                            </div>
+                            <br/>
+                            <div id="name">
+                                <Typography className={classes.title} color="primary" gutterBottom variant="h5" component="h4">
+                                    { chosen.name.value }
+                                </Typography>
+                            </div>
+                            <hr/>
+                            <div id="description">
+                                <Typography variant="subtitle2" component="h6">
+                                    { chosen.description.value }
+                                </Typography>
+                            </div>
+                            <hr/>
+                            <div id="lit">
+                                <Typography variant="body1" component="p">
+                                    { chosen.name.value }
+                                </Typography>
+                            </div>
+                            <br/>
+                            <div id="uri">
+                                { (chosen.link) ? 
+                                    <Button 
+                                        type={'link'} 
+                                        fullWidth 
+                                        href={ `/${(env.github_homepage) ? `${env.github_homepage}` : ''}${(chosen.link.href) ? chosen.link.href : ''}` } 
+                                        variant="contained" 
+                                        size="large"
+                                        color="primary">
+                                        {/* { chosen.s.type } */}
+                                        More Info
+                                    </Button>
+                                : null }
+                            </div>
+                            
+                        </div>
+                    </Fade>
+                </Modal>
             }
 
             { ((loadingState.filtersLoading || loadingState.searchLoading) && arrayIsEmpty(filtered)) 

@@ -64,10 +64,16 @@ const Footer = ({ env, pages, assets }) => {
                         <img src={NSFLogo} className={classes.funderLogo} title={'NSF logo'}></img>
                     </Box>
                     <Typography variant="subtitle1" component="p" align="center">
-                        Funded by the  <Link href={'https://www.nsf.org/'} title={'NSF website'} className={classes.link}> National Science Foundation (NSF) </Link> (Grant #s) 
+                        Funded by the  <Link href={'https://www.nsf.org/'} title={'NSF website'} className={classes.link}> National Science Foundation (NSF) </Link> 
+                    </Typography>
+                    <Typography variant="subtitle2" component="p">
+                        Associated Grants: 
+                        <Link href={'https://www.nsf.gov/awardsearch/showAward?AWD_ID=1550917&HistoricalAwards=false'} title={'NSF website'} className={classes.link}>1550917</Link>,&nbsp;
+                        <Link href={'https://www.nsf.gov/awardsearch/showAward?AWD_ID=1550887&HistoricalAwards=false'} title={'NSF website'} className={classes.link}>1550887</Link>,&nbsp;
+                        <Link href={'https://www.nsf.gov/awardsearch/showAward?AWD_ID=1550787&HistoricalAwards=false'} title={'NSF website'} className={classes.link}>1550787</Link>
                     </Typography>
                 </Box>
-            
+
             </Box>
 
             

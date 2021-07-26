@@ -20,6 +20,7 @@ import config from '../config'
 import { arrayIsEmpty, checkFor, convertFromCamelCase, isObjEmpty } from '../functions/formatFunctions'
 import { capitalize, isEmpty } from "lodash"
 import { updateName } from '../functions/appFunctions'
+import TableauReport from 'tableau-react'
 
 // ------------------------
 // Context
@@ -47,6 +48,36 @@ export const Home = ({ env }) => {
     
     const [ loadingState, loadingDispatch ] = useContext(LoadingContext)
 
+    const handleViz = () => 
+        <TableauReport
+            url='https://tableau.umn.edu/t/CSD-Facility/views/OCDMap1/Sheet1?:embed=y&:isGuestRedirectFromVizportal=y&:display_count=n&:showAppBanner=false&:origin=viz_share_link&:showVizHome=n'
+            // embed_code_version='3'
+            // site_root='&#47;t&#47;CSD-Facility'
+            // name='OCDMap1&#47;Sheet1'
+            // tabs='no'
+            // toolbar='yes'
+            // showAppBanner='false'
+            // display_count='n'
+            // origin='viz_share_link'
+            // isGuestRedirectFromVizportal='y'
+        />
+
+
+{/* <div class='tableauPlaceholder' style='width: 1156px; height: 997px;'>
+    <object class='tableauViz' width='1156' height='997' style='display:none;'>
+        <param name='host_url' value='https%3A%2F%2Ftableau.umn.edu%2F' /> 
+        <param name='embed_code_version' value='3' /> 
+        <param name='site_root' value='&#47;t&#47;CSD-Facility' />
+        <param name='name' value='OCDMap1&#47;Sheet1' />
+        <param name='tabs' value='no' />
+        <param name='toolbar' value='yes' />
+        <param name='showAppBanner' value='false' />
+        <param name='display_count' value='n' />
+        <param name='origin' value='viz_share_link' />
+        <param name='isGuestRedirectFromVizportal' value='y' />
+    </object>
+</div>  */}
+
     const handleToggle = (value) => () => {
       const currentIndex = checked.indexOf(value)
       const newChecked = [...checked]
@@ -66,7 +97,6 @@ export const Home = ({ env }) => {
         )
         console.log(filterState)
     }, [filterState])
-
 
     return(
         <>        
@@ -223,8 +253,16 @@ export const Home = ({ env }) => {
                                 { searchHeadContent.heading }
                             </Typography>
                         </Box>
-                        <Box className={classes.homeHeader}></Box>
-
+                        {/* <Box className={classes.homeHeader}></Box> */}
+                        
+                        <iframe
+                            width={'100%'}
+                            height={'500px'}
+                            style={{
+                                border: 'none'
+                            }}
+                            src='https://tableau.umn.edu/t/CSD-Facility/views/OCDMap1/Sheet1?:embed=y&:isGuestRedirectFromVizportal=y&:display_count=n&:showAppBanner=false&:origin=viz_share_link&:showVizHome=n&toolbar=no&tabs=no'
+                        />
                     </Box>
                 )}
             </Box>

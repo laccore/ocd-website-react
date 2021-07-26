@@ -1,8 +1,8 @@
-import React, {useEffect, useState, useContext, useMemo, useRef, createRef } from "react"
+import React, {useEffect, useState, useContext, useMemo, useRef } from "react"
 import clsx from 'clsx'
 
-import { MapContainer, TileLayer, WMSTileLayer, Marker, Popup, useMap } from "react-leaflet"
-import { LatLngExpression, latLngBounds, Map, featureGroup } from "leaflet"
+import { MapConsumer, MapContainer, TileLayer, WMSTileLayer, Marker, Popup, useMap } from "react-leaflet"
+import { LatLngExpression, latLng, latLngBounds, Map, featureGroup, LatLng } from "leaflet"
 
 import DataGrid, {
     Column, 
@@ -55,7 +55,7 @@ import useFetchAPI from '../hooks/useFetchAPI'
 // ------------------------
 import { AppSearchResults } from '../parts/appSearchResults'
 import { AppBreadcrumbs } from '../parts/appBreadcrumbs'
-import MapWrapper from '../parts/mapWrpper'
+// import MapWrapper from '../parts/mapWrpper'
 import DescriptionsDialog from '../parts/descriptionsDialog'
 
 export const DatasetUrl = (data) =>  
@@ -81,6 +81,20 @@ export const IGSNUrl = (data) =>
 const datasetColumns = ["description","keywords","url"]
 const boreholeColumns = ["child","holeid","igsn","lid","location"]
 const csdco = ['csdco:discipline', 'csdco:technique', 'csdco:investigators','csdco:repository','csdco:lab','csdco:funding','csdco:status', 'csdco:outreach','csdco:startdate','csdco:keywords','csdco:license']
+
+
+const MapComponent = ({places, position}) => {
+    const map = useMap()
+    // let center = map.getCenter()
+    if(!isObjEmpty(position)){
+        // map.setView(position)
+        map.setMaxBounds(position)
+        console.log(places)
+        console.log(position)
+    }
+    // console.log(center)
+    return null
+}
 
 export const ResearchProject = (props) => {
     
@@ -110,8 +124,8 @@ export const ResearchProject = (props) => {
 
     const [zoom, setZoom] = useState(4)
     // const [bounds, setBounds] = useState({})
-    const [position, setPosition] = useState([4,114])
-    const mapRef = createRef()
+    const [position, setPosition] = useState([60.505, -135.09])
+    const mapRef = useRef()
 
     const component = (page.path).split('/').filter(q => q != "")[0]
     const id = match.params.id
@@ -124,9 +138,7 @@ export const ResearchProject = (props) => {
     // const allPlacesBounds = useMemo(() => { 
     //     // const bounds = latLngBounds()
     //     // places.forEach((place) => bounds.extend(place))
-    //     // return bounds.pad(0.1)
-
-        
+    //     // return bounds.pad(0.1)   
     // }, [places])
 
     const updateDimensions = () => {
@@ -147,15 +159,26 @@ export const ResearchProject = (props) => {
             console.log(currentBounds)
             console.log(places[0])
             
-            setPosition(places[0])
+            // setPosition(places[0])
+            setPosition(currentBounds)
         }
         // setZoom(10)
+        
     }, [places])
     
 
     useEffect(() => {
         console.log(mapRef)
+        const { current = {} } = mapRef
+
     }, [mapRef])
+
+
+
+    useEffect(() => {
+        console.log(map)        
+    }, [map])
+
     // --------------------------
     // Fetch project content
     // --------------------------
@@ -357,21 +380,19 @@ export const ResearchProject = (props) => {
                         <Grid container>
                             <Grid xs={12} sm={12} item key={`map-section`}>
                                 <Box height={'100%'} style={{ overflow: 'hidden'}}>
-                                    { (places && !arrayIsEmpty(places) && places.length > 0) ?
+                                    { ( (places && !arrayIsEmpty(places) && places.length > 0) ) 
+                                        ?
                                         <MapContainer
+                                            ref={mapRef}
                                             className={classes.leafletContainer}
                                             style={{ height: mapHeight }}
-                                            // center={[60.505, -135.09]} 
-                                            center={position}
-                                            // center={places[0][0], places[0][1]}
-                                            // bounds={bounds}
+                                            center={position} 
                                             zoom={zoom}
-                                            // ref={mapRef}
-                                            
-                                            // maxBounds={}
-                                            // maxZoom={}
-                                            
+                                            // bounds={position}
                                         >
+                                            
+                                            <MapComponent places={places} position={position} />
+
                                             { places.map( (place, index) => 
                                                 <>
                                                 {/* {console.log(place)} */}
@@ -392,10 +413,6 @@ export const ResearchProject = (props) => {
                                                 </>
                                             ) }
                                             
-                                            {/* <TileLayer
-                                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                            /> */}
                                             <WMSTileLayer
                                                 url={'https://www.gmrt.org/services/mapserver/wms_merc'}
                                                 layers={'topo'}
@@ -404,6 +421,7 @@ export const ResearchProject = (props) => {
                                                 wrapX={true}
                                                 attribution='&copy; <a href="http://gmrt.org/copyright">GMRT</a> contributors'
                                             />
+
                                         </MapContainer>
                                     : 
                                         <Alert severity={'info'}>
