@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 // ------------------
 // Components
 // ------------------
-import { Box, Toolbar } from '@material-ui/core/'
+import { Box, Container, Link, Toolbar } from '@material-ui/core/'
 import { MemoMenuWebDrawer } from '../parts/menuWebDrawer'
 
 
@@ -20,25 +20,25 @@ import { MainLogo } from '../assets/styles/custom-svgs'
 
 export const AppToolbar = ({ env, pages }) => {
   
-    const classes = useStyles()
+  const classes = useStyles()
 
-    const [drawer, setDrawer] = useState({
-      web: false,
-    })  
+  const [drawer, setDrawer] = useState({
+    web: false,
+  })  
 
-    const toggleDrawer = (type, value) => (event) => {
-      if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-        return
-      }
-      setDrawer({
-        ...drawer,
-        [type]: value
-      })
+  const toggleDrawer = (type, value) => (event) => {
+    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return
     }
+    setDrawer({
+      ...drawer,
+      [type]: value
+    })
+  }
 
-    return (
-    <>
-      <Toolbar className={classes.toolbar}> 
+  return (
+      // <Container maxWidth={'lg'} className={classes.container}>
+    <Toolbar className={classes.toolbar}> 
         <Box p={1} className={''} justifyContent="left">
           <a href={`/`} className={classes.logo}>
             <MainLogo className={classes.logoSVG} color={'primary'}/>
@@ -52,9 +52,9 @@ export const AppToolbar = ({ env, pages }) => {
                 if(!page.disabled){
                   return(
                     <li key={page.name} className={clsx(classes.menuItem,'nav-item p-0 mx-2')}>
-                      <a href={`/${(env.github_homepage) ? `${env.github_homepage}` : ''}${page.path}`} className={clsx(classes.menuItemLink)}>
+                      <Link href={`${page.path}`} className={clsx(classes.menuItemLink)}>
                           {(page.name).toUpperCase()}
-                      </a>
+                      </Link>
                     </li>
                   )
                 }
@@ -80,8 +80,8 @@ export const AppToolbar = ({ env, pages }) => {
           pages={pages}
         />
 
-      </Toolbar>
-    </>
+    </Toolbar>
+    //  </Container>
   )
 }
 

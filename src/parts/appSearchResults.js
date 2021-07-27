@@ -81,7 +81,9 @@ export function AppSearchResults({checked=[], setChecked, env}) {
         setSortDirection(!sortDirection)
     }
     
-
+    // ------------------------------
+    // Creates type filter 
+    // ------------------------------
     const assignFileTypeFilter = (currentResults) => {
         let allFileTypes = currentResults.map(result => {
             // For DataType Filter: 
@@ -102,7 +104,9 @@ export function AppSearchResults({checked=[], setChecked, env}) {
         filterDispatch({ type: 'SET_FILTER_FILETYPE', fileType: occurances })
     }
 
-
+    // ------------------------------
+    // Creates dataType filter
+    // ------------------------------
     const assignDataTypeFilter = (currentResults) => {
         let allDataTypes = currentResults.map(result => {
             // For DataType Filter: 
@@ -127,10 +131,16 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                 
                 loadingDispatch({ type: 'SET_FILTERS_LOADING', action: true})
                 
-                console.log(loadingState)
-
                 setResults(searchState.results)
-                setFiltered(searchState.results)
+
+                let currentFiltered = (searchState.results).sort((a,b) => ( (a.type.value < b.type.value ) && (a.name.value > b.name.value) ) 
+                    ? 1 : -1 )
+
+                console.log(searchState.results)
+                console.log(currentFiltered)
+
+                // setFiltered(searchState.results)
+                setFiltered(currentFiltered)
                 
                 setSortOptions( (searchState.results[0]) 
                     ? Object.keys(searchState.results[0]).filter(key => 
@@ -146,8 +156,6 @@ export function AppSearchResults({checked=[], setChecked, env}) {
                 await assignFileTypeFilter(searchState.results)
 
                 loadingDispatch({ type: 'SET_FILTERS_LOADING', action: false})
-
-                console.log(loadingState)
             }  
 
         })()
@@ -155,8 +163,10 @@ export function AppSearchResults({checked=[], setChecked, env}) {
     }, [searchState.results])
 
 
+    // ----------------------------------------
+    // Update results from checked filter items
+    // ----------------------------------------
     useEffect(() => {
-        
         
         // (async () => {
             if(results && results.length > 0){
@@ -183,6 +193,9 @@ export function AppSearchResults({checked=[], setChecked, env}) {
 
     }, [checked])
 
+    // ------------------------------
+    // Update results on sort options
+    // ------------------------------
     useEffect(() => {
         
         if(Array.isArray(filtered) && filtered.length !== 0){

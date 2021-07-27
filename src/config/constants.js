@@ -14,7 +14,6 @@ const constants = {
     DOMAIN: (process.env.REACT_APP_DOMAIN) ? process.env.REACT_APP_DOMAIN : '',
     SHORTNAME: (process.env.REACT_APP_SHORTNAME) ? process.env.REACT_APP_SHORTNAME : 'ocd',
     GITHUB_HOMEPAGE: (process.env.REACT_APP_GITHUB_HOMEPAGE) ? process.env.REACT_APP_GITHUB_HOMEPAGE : ''
-
     
 }
 

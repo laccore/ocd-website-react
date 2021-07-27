@@ -42,7 +42,6 @@ import { LoadingProvider } from '../contexts/loadingContext'
 // Functions:
 // ----------
 
-
 export const App = (props) => {
 
   const classes = useStyles()
@@ -50,7 +49,7 @@ export const App = (props) => {
 
   return ( 
     <Router
-      basename={`${(env.github_homepage) ? `${env.github_homepage}` : ''}`}     
+      // basename={`${(env.github_homepage) ? `${env.github_homepage}` : ''}`}     
     > 
       <ErrorsProvider>
       <LoadingProvider>
