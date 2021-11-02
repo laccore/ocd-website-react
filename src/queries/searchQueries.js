@@ -1,29 +1,29 @@
 import PropTypes from 'prop-types'
 
-export const queryToSearchParams = (query, size, offset) => 
+export const queryToSearchParams = (query, size, offset) =>
     `prefix schema: <https://schema.org/> \
-    SELECT DISTINCT ?s ?type ?score ?name ?lit ?description \
-    WHERE { \
-    ?lit bds:search \"${query.toLowerCase().toString()}\" . \
-    ?lit bds:matchAllTerms "false" . \
-    ?lit bds:relevance ?score . \
-    ?s ?p ?lit . \
-    ?s schema:name ?name . \
-    ?s schema:description ?description .  \
-    ?s rdf:type ?type . \
-    } \
-    ORDER BY DESC(?score) \
-    LIMIT ${size} \
-    OFFSET ${offset} \
-    `
+SELECT DISTINCT ?s ?type ?name ?description
+WHERE {
+?lit bds:search "${query.toLowerCase().toString()}" .
+?lit bds:matchAllTerms "false" .
+?lit bds:relevance ?score .
+?s ?p ?lit .
+?s schema:name ?name .
+?s schema:description ?description .
+?s rdf:type ?type .
+}
+ORDER BY DESC(?score)
+LIMIT ${size}
+OFFSET ${offset}
+`
 
 queryToSearchParams.propTypes = {
     query: PropTypes.string.isRequired,
     size: PropTypes.number,
     offset: PropTypes.number
 }
-    
-export const queryForResearchDatasets = (query) => 
+
+export const queryForResearchDatasets = (query) =>
     ` prefix schema: <http://schema.org/> \
         SELECT DISTINCT *
         WHERE { \
@@ -37,7 +37,7 @@ export const queryForResearchDatasets = (query) =>
             ?child <https://schema.org/hasPart> ?part .
             ?part <https://schema.org/url> ?parturl
         }
-    ` 
+    `
 queryForResearchDatasets.propTypes = {
     query: PropTypes.string.isRequired
 }
@@ -46,7 +46,7 @@ queryForResearchDatasets.propTypes = {
 // ---------------------------------
 // Research Borehold specific info
 // ---------------------------------
-export const queryForResearchBorehole = (query) => 
+export const queryForResearchBorehole = (query) =>
     ` prefix schema: <https://schema.org/> 
     SELECT DISTINCT ?child ?holeid ?igsn ?location ?lid
     WHERE 
@@ -63,7 +63,7 @@ queryForResearchBorehole.propTypes = {
     query: PropTypes.string.isRequired
 }
 
-export const queryForDigitalObject = (id) => 
+export const queryForDigitalObject = (id) =>
     ` prefix schema: <https://schema.org/> 
     SELECT DISTINCT *
     WHERE 
