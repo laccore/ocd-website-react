@@ -1,7 +1,7 @@
 {
   "name": "ocd-website-react",
   "version": "0.1.0",
-  "homepage": "https://figueroadjuan.github.io/ocd-website-react/",
+  "homepage": "",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.3",
