@@ -16,7 +16,7 @@ import { MainLogo } from '../assets/styles/custom-svgs'
 // ---------------
 // Pages:
 // ---------------
-import { Home } from '../pages/home' 
+import { Home } from '../pages/home'
 import { About } from '../pages/about'
 import { ResearchProject } from '../pages/researchProject'
 import { DigitalObject } from '../pages/digitalObject'
@@ -33,27 +33,27 @@ import { isEmpty } from '../functions/formatFunctions'
 // ------------------
 // Components:
 // ------------------
-const componentHome = (props) => <Home {...props }/>
-const componentAbout = (props) => <About {...props }/>
-const componentRes = (props) => <ResearchProject {...props }/>
-const componentDo = (props) => <DigitalObject {...props }/>
-const componentPkg = (props) => <Package {...props }/>
+const componentHome = (props) => <Home {...props} />
+const componentAbout = (props) => <About {...props} />
+const componentRes = (props) => <ResearchProject {...props} />
+const componentDo = (props) => <DigitalObject {...props} />
+const componentPkg = (props) => <Package {...props} />
 
 
 const primaryParent = 1
 
-export const ASSETS = { 
+export const ASSETS = {
     logo: MainLogo,
     // favicon: Favicon,
     // fullLogo: FullLogo,
     // background: Background
 }
-    
+
 export const PAGES = [
-    { 
+    {
         name: "home",
         title: "Home",
-        path:"/",
+        path: "/",
         exact: true,
         parameters: "",
         parent: primaryParent,
@@ -61,10 +61,10 @@ export const PAGES = [
         // icon: FilterIcon,
         component: componentHome,
     },
-    { 
+    {
         name: "about",
         title: "About",
-        path:"/about",
+        path: "/about",
         exact: true,
         parameters: "",
         parent: primaryParent,
@@ -72,10 +72,10 @@ export const PAGES = [
         // icon: FilterIcon,
         component: componentAbout,
     },
-    { 
+    {
         name: "research-project",
         title: "Research Project",
-        path:"/res/:id",
+        path: "/res/:id",
         exact: false,
         parameters: ":id",
         parent: primaryParent,
@@ -83,10 +83,10 @@ export const PAGES = [
         // icon: FilterIcon,
         component: componentRes,
     },
-    { 
+    {
         name: "digital-object",
         title: "Digital Object",
-        path:"/do/:id",
+        path: "/do/:id",
         exact: false,
         parameters: ":id",
         parent: primaryParent,
@@ -94,10 +94,10 @@ export const PAGES = [
         // icon: FilterIcon,
         component: componentDo,
     },
-    { 
+    {
         name: "package",
         title: "Package",
-        path:"/pkg/:id",
+        path: "/pkg/:id",
         exact: false,
         parameters: ":id",
         parent: primaryParent,
@@ -105,7 +105,7 @@ export const PAGES = [
         // icon: FilterIcon,
         component: componentPkg,
     },
-    
+
 ]
 
 export const FILTERS = [
