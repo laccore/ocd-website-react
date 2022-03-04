@@ -3,8 +3,8 @@ const { ENV, GRAPH, OCD, VERSION, DOMAIN, SITENAME, SHORTNAME, GITHUB_HOMEPAGE }
 
 module.exports = {
   development: {
-    siteName: `${SITENAME}-${ENV}`,
-    shortName: `${SHORTNAME}-${ENV}`,
+    siteName: `${SITENAME}`,
+    shortName: `${SHORTNAME}`,
     domain: `${DOMAIN}`,
     version: `${ENV}-${VERSION}`,
     graph: `${GRAPH}`,

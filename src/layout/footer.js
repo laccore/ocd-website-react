@@ -22,7 +22,7 @@ export const useStyles = makeStyles(theme => ({
     },
     listItem: {
         color: theme.palette.white.main,
-        margin: theme.spacing(0,1),
+        margin: theme.spacing(0, 1),
         fontWeight: '600'
     },
     funderLogo: {
@@ -41,21 +41,21 @@ const Footer = ({ env, pages, assets }) => {
 
     return (
         <>
-            <Box p={0} color={'grey.100'} textAlign={'center'}> 
-                
+            <Box p={0} color={'grey.100'} textAlign={'center'}>
+
                 <Box p={4} className={classes.preFooterBox}>
                     <ul className={clsx(classes.unorderedList)}>
-                        { pages.map(page => {
-                            if(!page.disabled){
-                                return(
+                        {pages.map(page => {
+                            if (!page.disabled) {
+                                return (
                                     <li key={page.name} className={clsx(classes.listItem)}>
-                                        <Link href={`/${(env.github_homepage) ? `${env.github_homepage}` : ''}${page.path}`} color={'inherit'}>
+                                        <Link href={`${page.path}`} color={'inherit'}>
                                             {(page.name).toUpperCase()}
                                         </Link>
                                     </li>
                                 )
                             }
-                        })} 
+                        })}
                     </ul>
                 </Box>
 
@@ -64,10 +64,10 @@ const Footer = ({ env, pages, assets }) => {
                         <img src={NSFLogo} className={classes.funderLogo} title={'NSF logo'}></img>
                     </Box>
                     <Typography variant="subtitle1" component="p" align="center">
-                        Funded by the  <Link href={'https://www.nsf.org/'} title={'NSF website'} className={classes.link}> National Science Foundation (NSF) </Link> 
+                        Funded by the  <Link href={'https://www.nsf.org/'} title={'NSF website'} className={classes.link}> National Science Foundation (NSF) </Link>
                     </Typography>
                     <Typography variant="subtitle2" component="p">
-                        Associated Grants: 
+                        Associated Grants:
                         <Link href={'https://www.nsf.gov/awardsearch/showAward?AWD_ID=1550917&HistoricalAwards=false'} title={'NSF website'} className={classes.link}>1550917</Link>,&nbsp;
                         <Link href={'https://www.nsf.gov/awardsearch/showAward?AWD_ID=1550887&HistoricalAwards=false'} title={'NSF website'} className={classes.link}>1550887</Link>,&nbsp;
                         <Link href={'https://www.nsf.gov/awardsearch/showAward?AWD_ID=1550787&HistoricalAwards=false'} title={'NSF website'} className={classes.link}>1550787</Link>
@@ -76,9 +76,9 @@ const Footer = ({ env, pages, assets }) => {
 
             </Box>
 
-            
 
-            <Box py={4}  bgcolor={'black.main'} color={'grey.300'} textAlign={'center'}> 
+
+            <Box py={4} bgcolor={'black.main'} color={'grey.300'} textAlign={'center'}>
                 <Typography variant="subtitle2" component="h6" align="center">
                     {`Copyright © ${env.siteName} ${new Date().getFullYear()}.`}
                 </Typography>
