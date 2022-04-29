@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 // Styles/Assets:
 // --------------
 import { useStyles } from './appSearchHead.style'
-import {Box, Button, Container, Divider, FormControl, Grid, IconButton, InputLabel, InputBase, MenuItem, Select, Paper, Typography, Chip } from '@material-ui/core/'
+import { Box, Button, Container, Divider, FormControl, Grid, IconButton, InputLabel, InputBase, MenuItem, Select, Paper, Typography, Chip } from '@material-ui/core/'
 
 import SearchIcon from '@material-ui/icons/Search';
 
@@ -32,19 +32,19 @@ import { LoadingContext } from '../contexts/loadingContext'
 import { searchHeadContent } from '../assets/data/pageContent'
 
 
-export const AppSearchHead = ({ env } ) => {
+export const AppSearchHead = ({ env }) => {
 
   const classes = useStyles()
 
-  const [ fetchState, fetchData ] = useFetchAPI()
-  const [ searchState, searchDispatch ] = useContext(SearchContext)
-  const [ loadingState, loadingDispatch ] = useContext(LoadingContext)
+  const [fetchState, fetchData] = useFetchAPI()
+  const [searchState, searchDispatch] = useContext(SearchContext)
+  const [loadingState, loadingDispatch] = useContext(LoadingContext)
 
 
   // const { url, params, body } = defaultSearch(env.api, searchQuery)
-  const [ searchQuery, setSearchQuery ] = useState("");
-  const [ searchLimit, setSearchLimit ] = useState(1000);
-  const [ searchOffset, setSearchOffset ] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchLimit, setSearchLimit] = useState(1000);
+  const [searchOffset, setSearchOffset] = useState(0);
 
   const location = useLocation()
   const history = useHistory()
@@ -70,92 +70,92 @@ export const AppSearchHead = ({ env } ) => {
   }
 
   const onSearchSubmit = () => {
-    if(!isEmpty(searchQuery)){
+    if (!isEmpty(searchQuery)) {
 
       searchDispatch({ type: 'SET_SEARCH_QUERY', query: searchQuery })
 
-      console.log(searchState)
-      console.log(location)
-      
-      
-      if(location.pathname !== '/' || location.pathname !== ''){
+      // console.log(searchState)
+      // console.log(location)
+
+
+      if (location.pathname !== '/' || location.pathname !== '') {
         history.push(`/${location.search}`)
       }
     }
   }
 
   useEffect(() => {
-    
+
     (async () => {
 
-      loadingDispatch({ type: 'SET_SEARCH_LOADING', searchLoading: true})
+      loadingDispatch({ type: 'SET_SEARCH_LOADING', searchLoading: true })
 
-      console.log(loadingState)
-      
+      // console.log(loadingState)
+
       const query = {
         value: searchState.query,
         limit: searchLimit,
         offset: searchOffset
       }
       setChipData(chips => [searchState.query])
-      
-      const {url, params, body} = defaultSearch(env.graph, query)
+
+      const { url, params, body } = defaultSearch(env.graph, query)
       await fetchData(url, body)
 
-      loadingDispatch({ type: 'SET_SEARCH_LOADING', searchLoading: false})
-      
-      console.log(loadingState)
+      loadingDispatch({ type: 'SET_SEARCH_LOADING', searchLoading: false })
+
+      // console.log(loadingState)
 
     })()
 
   }, [searchState.query])
-  
+
   useEffect(() => {
-    if(!isEmpty(fetchState.data)){
+    if (!isEmpty(fetchState.data)) {
       let currentData = fetchState.data
-      if(currentData.results){
-        console.log(currentData)
-        console.log(currentData.results)
-        if(currentData.results.bindings){
-          console.log(currentData.results)
-          console.log(currentData.results.bindings)
+      if (currentData.results) {
+        // console.log(currentData)
+        // console.log(currentData.results)
+        if (currentData.results.bindings) {
+          // console.log(currentData.results)
+          // console.log(currentData.results.bindings)
           searchDispatch({ type: 'SET_SEARCH_RESULTS', results: currentData.results.bindings })
         }
       }
     }
   }, [fetchState])
-  
+
   useEffect(() => {
-    
-    console.log(searchState.query)
-    if(!isEmpty(searchState.query)){
-      console.log(searchState.query)
+
+    // console.log(searchState.query)
+    if (!isEmpty(searchState.query)) {
+      // console.log(searchState.query)
       searchDispatch({ type: 'SET_SEARCH_QUERY', query: searchState.query })
     }
 
   }, [])
-  
+
   return (
-     
+
     <Box p={4} className={clsx(classes.backdrop)} textAlign={'center'} justifyContent="center">
       <Box pt={2} margin={'auto'} maxWidth={'920px'} width={"100%"}>
         <Typography className={classes.heading} variant={'h4'} component={'h1'}>
-            { env.siteName }
+          {env.siteName}
         </Typography>
         <Typography className={classes.subheading} variant={'subtitle2'} component={'h2'}>
-            <i>{ searchHeadContent.subheading } </i>
+          <i>{searchHeadContent.subheading} </i>
         </Typography>
       </Box>
-        
+
       <Box p={2} width={'100%'} display={'flex'} flexDirection={'column'} alignItems={'center'}>
         <Grid container spacing={0} className={classes.inputBox} >
           <Grid key={'search-input'} item xs={10}>
             <InputBase
-              className={ classes.inputBase }
+              className={classes.inputBase}
               placeholder={`Search ${env.siteName}`}
               fullWidth
               inputProps={{ 'aria-label': `search ${env.siteName}` }}
-              onChange={onSearchInput} 
+              onChange={onSearchInput}
             />
           </Grid>
 
@@ -176,7 +176,7 @@ export const AppSearchHead = ({ env } ) => {
               <MenuItem value={100}>100</MenuItem>
             </Select>
           </FormControl> */}
-          
+
           {/* <Divider className={classes.divider} orientation="vertical" /> */}
           <Grid key={'search-submit'} item xs={2}>
             <Button
@@ -187,15 +187,15 @@ export const AppSearchHead = ({ env } ) => {
               fullWidth
               aria-label="search-results-submit"
               onClick={() => onSearchSubmit()}
-            >  
+            >
               <SearchIcon />
             </Button>
           </Grid>
         </Grid>
 
-        { (searchState.query) ? 
+        {(searchState.query) ?
           <>
-            { chipData.map(chipItem => 
+            {chipData.map(chipItem =>
               <Chip
                 key={chipItem}
                 label={chipItem}
@@ -207,14 +207,14 @@ export const AppSearchHead = ({ env } ) => {
           </>
           : null
         }
-        
+
       </Box>
     </Box>
   )
 }
 
 AppSearchHead.propTypes = {
-    env: PropTypes.object.isRequired
+  env: PropTypes.object.isRequired
 }
 
 // export const MemoAppSearchHead = memo(AppSearchHead) 

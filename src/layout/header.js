@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import PropTypes from 'prop-types'
 // import clsx from 'clsx'
 
@@ -37,36 +37,36 @@ const Header = ({ env, assets, pages }) => {
     // let searchQuery = queryString.parse(props.location.search)
     // let searchFilterQuery = (searchQuery.filter) ? JSON.parse(searchQuery.filter) : []
 
-    const [ searchState, searchDispatch ] = useContext(SearchContext)
+    const [searchState, searchDispatch] = useContext(SearchContext)
 
-    const handleAddToQuery = (urlQuery='') => {
-        
-        const newQuery = (urlQuery) 
+    const handleAddToQuery = (urlQuery = '') => {
+
+        const newQuery = (urlQuery)
             ? { search: `query=${urlQuery}` }
             : urlQuery
-        
-        history.push(newQuery) 
+
+        history.push(newQuery)
         searchDispatch({ type: 'SET_SEARCH_QUERY', query: urlQuery })
-        console.log(newQuery)
+        // console.log(newQuery)
     }
 
     useEffect(() => {
-        console.log(searchState.query)
-        
-        if(!isEmpty(searchState.query)){
-            console.log(searchState.query)
+        // console.log(searchState.query)
+
+        if (!isEmpty(searchState.query)) {
+            // console.log(searchState.query)
             handleAddToQuery(searchState.query)
         }
 
     }, [searchState.query])
 
     useEffect(() => {
-        
-        console.log(query)
+
+        // console.log(query)
         let newQuery = query.get('query')
-        
-        if(!isEmpty(newQuery)){
-            console.log(query)
+
+        if (!isEmpty(newQuery)) {
+            // console.log(query)
             handleAddToQuery(newQuery)
         }
 

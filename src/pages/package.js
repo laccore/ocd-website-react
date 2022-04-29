@@ -50,15 +50,9 @@ export const Package = (props) => {
 
     const [content, setContent] = useState({});
 
-    const handleDownload = (content) => {
-        // console.log(content);
-        // console.log(window.location.href);
-
+    const handleDownload = (content, url) => {
         var packageUrl = window.location.href;
         packageUrl = packageUrl.replace("/pkg/", "/id/csdco/pkg/") + ".zip";
-
-        // console.log(packageUrl);
-        // console.log(content.name);
 
         const downloadLink = document.createElement('a');
         downloadLink.href = packageUrl;
@@ -95,7 +89,6 @@ export const Package = (props) => {
                 let query = `${component}/${id}`
 
                 const { url, body } = componentSearch(env.ocd, query)
-                console.log(url, body)
                 await fetchData(url, body)
                 //   await fetchData(url, body)
 
@@ -147,7 +140,7 @@ export const Package = (props) => {
                             <List component="ul" aria-label="download list">
                                 {(!arrayIsEmpty(content.resources)) ?
                                     Object.entries(content.resources).map(([key, val]) => {
-                                        console.log(key, val)
+                                        // console.log(key, val)
                                         return (
                                             <ListItem
                                                 key={`list-item-${val.name}`}
