@@ -54,10 +54,15 @@ export const DigitalObject = (props) => {
     const id = match.params.id
     const query = `${component}/${id}`
 
-    const handleDownload = (url) => {
-        console.log("alextest")
+    const handleDownload = (content) => {
+        // console.log("Attempting download of: " + content.url.value)
 
-        console.log(url)
+        const downloadLink = document.createElement('a');
+        downloadLink.href = content.url.value;
+        downloadLink.download = content.name.value;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
     }
 
     // ------------------------------
@@ -144,14 +149,10 @@ export const DigitalObject = (props) => {
                                     variant={'contained'}
                                     download={content.name.value}
                                     // component={'a'}
-                                    onClick={handleDownload(content.url.value)}
-                                // onClick={() => { console.log(content); }}
+                                    onClick={() => { handleDownload(content) }}
                                 >
                                     Download
                                 </Button>
-
-                                <a href={content.url.value} download>Download File</a>
-
                             </Box>
                         </Box>
 

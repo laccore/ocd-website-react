@@ -1,10 +1,10 @@
-import React, {useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext } from "react"
 import clsx from 'clsx'
 
 // ------------------------
 // Material
 // ------------------------
-import {  Accordion, AccordionSummary, AccordionDetails, Box, Button, Checkbox, Grid, FormControl, IconButton, InputLabel, InputBase, List, ListItem, ListItemSecondaryAction, ListItemText, Select, Typography, Chip } from '@material-ui/core/'
+import { Accordion, AccordionSummary, AccordionDetails, Box, Button, Checkbox, Grid, FormControl, IconButton, InputLabel, InputBase, List, ListItem, ListItemSecondaryAction, ListItemText, Select, Typography, Chip } from '@material-ui/core/'
 import { Alert } from '@material-ui/lab'
 import GetAppIcon from '@material-ui/icons/GetApp'
 
@@ -36,60 +36,89 @@ import { AppBreadcrumbs } from '../parts/appBreadcrumbs'
 const dataTypes = ['project', 'dataset', 'file']
 
 export const Package = (props) => {
-    
+
     const classes = useStyles()
     const [checked, setChecked] = useState([]) // for one filter (array of...)
     const [expanded, setExpanded] = useState(0);
 
-    const [ searchState, searchDispatch ] = useContext(SearchContext)
-    const [ filterState, filterDispatch ] = useContext(FilterContext)
+    const [searchState, searchDispatch] = useContext(SearchContext)
+    const [filterState, filterDispatch] = useContext(FilterContext)
 
-    const [ fetchState, fetchData ] = useFetchAPI()
-    
+    const [fetchState, fetchData] = useFetchAPI()
+
     const { page, env, match } = props
-       
-    const [ content, setContent ] = useState({});
-  
+
+    const [content, setContent] = useState({});
+
+    const handleDownload = (content) => {
+        // console.log(content);
+        // console.log(window.location.href);
+
+        var packageUrl = window.location.href;
+        packageUrl = packageUrl.replace("/pkg/", "/id/csdco/pkg/") + ".zip";
+
+        // console.log(packageUrl);
+        // console.log(content.name);
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = packageUrl;
+        downloadLink.download = content.name;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+
+    const handleFileDownload = (content) => {
+        // console.log(content);
+
+        const downloadLink = document.createElement('a');
+        downloadLink.href = content.path;
+        downloadLink.download = content.name;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+    }
+
     useEffect(() => {
-        if(!isEmpty(fetchState.data)){
+        if (!isEmpty(fetchState.data)) {
             setContent(fetchState.data)
         }
     }, [fetchState])
-    
+
     useEffect(() => {
-        
+
         (async () => {
-            if(match.params.id && !isEmpty(match.params.id)){
-                
+            if (match.params.id && !isEmpty(match.params.id)) {
+
                 let component = (page.path).split('/').filter(q => q != "")[0]
                 let id = match.params.id
                 let query = `${component}/${id}`
 
-              const {url, body} = componentSearch(env.ocd, query)
-              console.log(url, body)
-              await fetchData(url, body)
-            //   await fetchData(url, body)
+                const { url, body } = componentSearch(env.ocd, query)
+                console.log(url, body)
+                await fetchData(url, body)
+                //   await fetchData(url, body)
 
             } else {
                 setContent(null)
             }
-        
+
         })()
-    
+
     }, [])
 
-    return(
-        <>        
+    return (
+        <>
             <AppBreadcrumbs {...props} name={content['name']} />
-            <Box 
-                bgcolor={'inherit'} 
+            <Box
+                bgcolor={'inherit'}
                 position={'relative'}
-                p={0} 
-                boxShadow={2} 
-                borderRadius={4} 
-                // className={clsx(classes.boxSearchResults)}
-            >   
-                { (content && !isObjEmpty(content)) ? 
+                p={0}
+                boxShadow={2}
+                borderRadius={4}
+            // className={clsx(classes.boxSearchResults)}
+            >
+                {(content && !isObjEmpty(content)) ?
                     <>
                         <Box p={4} justifyContent={'center'} alignItems={'center'} bgcolor={'grey.200'}>
                             <Typography variant={'h5'} component={'h2'}>
@@ -101,33 +130,36 @@ export const Package = (props) => {
                                 </Typography>
                             </Box>
                             <Box my={1}>
-                                <Button 
-                                    color={'primary'} 
-                                    variant={'contained'} 
+                                <Button
+                                    color={'primary'}
+                                    variant={'contained'}
+                                    // download={content.name.value}
+                                    // component={'a'}
+                                    onClick={() => { handleDownload(content) }}
                                 >
                                     Download All
                                 </Button>
 
                             </Box>
                         </Box>
-                        
+
                         <Box >
                             <List component="ul" aria-label="download list">
-                                { (!arrayIsEmpty(content.resources)) ?
-                                    Object.entries(content.resources).map(([key,val]) => {
-                                        console.log(key,val)
-                                        return(
-                                            <ListItem 
-                                                key={`list-item-${val.name}`} 
-                                                divider 
-                                                // disableGutters
-                                                // style={{ padding: '8px 16px' }}    
+                                {(!arrayIsEmpty(content.resources)) ?
+                                    Object.entries(content.resources).map(([key, val]) => {
+                                        console.log(key, val)
+                                        return (
+                                            <ListItem
+                                                key={`list-item-${val.name}`}
+                                                divider
+                                            // disableGutters
+                                            // style={{ padding: '8px 16px' }}    
                                             >
                                                 <Chip
                                                     variant={'outlined'}
                                                     color={'primary'}
                                                     label={val.mediatype}
-                                                    style={{ margin: '8px 16px'}}
+                                                    style={{ margin: '8px 16px' }}
                                                 >
 
                                                 </Chip>
@@ -135,12 +167,13 @@ export const Package = (props) => {
                                                     val.description
                                                 } />
                                                 <ListItemSecondaryAction>
-                                                    <IconButton 
-                                                        edge="end" 
+                                                    <IconButton
+                                                        edge="end"
                                                         aria-label="download"
                                                         color='primary'
                                                         size='medium'
                                                         download={val.path}
+                                                        onClick={() => { handleFileDownload(val) }}
                                                     >
                                                         <GetAppIcon color={'primary'} />
                                                     </IconButton>
@@ -152,8 +185,8 @@ export const Package = (props) => {
                             </List>
                         </Box>
                     </>
-                    
-                : 
+
+                    :
                     <Alert severity={'error'}>
                         'No package available for this identifier.'
                     </Alert>
@@ -162,5 +195,5 @@ export const Package = (props) => {
         </>
     )
 }
-  
-  export default Package
+
+export default Package
